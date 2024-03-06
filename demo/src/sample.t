@@ -21,29 +21,25 @@
 
 #include "nightSky.h"
 
-versionInfo: GameID
-        name = 'nightSky Library Demo Game'
-        byline = 'Diegesis & Mimesis'
-        desc = 'Demo game for the nightSky library. '
-        version = '1.0'
-        IFID = '12345'
-	showAbout() {
-		"This is a simple test game that demonstrates the features
-		of the nightSky library.
-		<.p>
-		Consult the README.txt document distributed with the library
-		source for a quick summary of how to use the library in your
-		own games.
-		<.p>
-		The library source is also extensively commented in a way
-		intended to make it as readable as possible. ";
+versionInfo: GameID;
+gameMain: GameMainDef
+	newGame() {
+		local c, h, l, sky, altAz;
+
+		//c = new Calendar(1979, 6, 22, 'EST-5EDT');
+		//sky = new NightSky(42, -71, c);
+		c = new Calendar(2024, 3, 6);
+		sky = new NightSky(37, -122, c);
+
+		h = 2;
+		"visible constellations:\n ";
+		l = sky.computeVisible(23, h);
+		l.forEach(function(o) {
+			altAz = sky.raDecToAltAz(o[3], o[4], h);
+			if(altAz[1] < 0) return;
+			"\n\t<<o[1]>> (<<toString(altAz[1])>>,
+				<<toString(altAz[2])>>)\n ";
+		});
+		"\n total = <<toString(l.length)>>\n ";
 	}
 ;
-gameMain: GameMainDef
-	initialPlayerChar = me
-	inlineCommand(cmd) { "<b>&gt;<<toString(cmd).toUpper()>></b>"; }
-	printCommand(cmd) { "<.p>\n\t<<inlineCommand(cmd)>><.p> "; }
-;
-
-startRoom: Room 'Void' "This is a featureless void.";
-+me: Person;
