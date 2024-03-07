@@ -14,4 +14,7 @@
 #error "calendar should be in /home/user/tads/calendar ."
 #endif // CALENDAR_H
 
+#define gSetPosition(l0, l1) (gameSky.setPosition(l0, l1))
+#define gSky (gameSky)
+
 #define NIGHT_SKY_H

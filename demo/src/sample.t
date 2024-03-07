@@ -29,9 +29,9 @@ gameMain: GameMainDef
 		c = new Calendar(1979, 6, 22, 'EST-5EDT');
 		sky = new NightSky(42, -71, c);
 
-		h = 20;
+		h = 23;
 		"visible constellations:\n ";
-		l = sky.computeVisible(23, h);
+		l = sky.computeVisible(23, h, true);
 		l.forEach(function(o) {
 			altAz = sky.raDecToAltAz(o[3], o[4], h);
 			if(altAz[1] < 0) return;
@@ -39,5 +39,12 @@ gameMain: GameMainDef
 				<<toString(altAz[2])>>)\n ";
 		});
 		"\n total = <<toString(l.length)>>\n ";
+
+		"<.p>";
+
+		"Is Draco visible?  <<toString(sky.checkConstellation('draco',
+			h))>>\n ";
+		"Is Aries visible?  <<toString(sky.checkConstellation('aries',
+			h))>>\n ";
 	}
 ;

@@ -18,8 +18,6 @@ nightSkyModuleID: ModuleID {
 }
 
 class NightSky: object
-	_iauConstellations = nil
-
 	// Our viewing position's latitude and longitude, as integer
 	// degrees.
 	latitude = nil
@@ -30,6 +28,9 @@ class NightSky: object
 	// hours of right ascension.
 	horizonWidth = 5
 
+	// Holds a Calendar instance.
+	calendar = nil
+
 	// The viewing position's latitude and lognitude as bignum
 	// radians.
 	_lat = nil
@@ -39,7 +40,9 @@ class NightSky: object
 	_latSine = nil
 	_latCosine = nil
 
-	calendar = nil
+	// To hold our list of constellations.
+	// Supplied by nightSkyData.t
+	_constellations = nil
 
 	construct(lat?, long?, cal?) {
 		// We arbitrarily default to Greenwich if our location
@@ -57,6 +60,11 @@ class NightSky: object
 		if(cal == nil)
 			cal = new Calendar();
 		calendar = cal;
+	}
+
+	setPosition(l0, l1) {
+		setLatitude(l0);
+		setLongitude(l1);
 	}
 
 	// Explicit setters for the latitude and longitude.
@@ -80,7 +88,7 @@ class NightSky: object
 	// hours of right ascension.  Default is 5, which means
 	// that the current meridian +/- 5 hours, or ~11 hours
 	// or just under half the total sky is visible.
-	computeVisible(h?, width?) {
+	computeVisible(h?, width?, short?) {
 		local st;
 
 		st = calendar.getLocalSiderealTime(h, longitude);
@@ -88,21 +96,53 @@ class NightSky: object
 		if(width == nil)
 			width = horizonWidth;
 
-		return(searchConstellations(st, width));
+		return(searchConstellations(st, width, short));
 	}
 
 	// Same as computeVisible() above, but the first argument is
 	// is local sidereal time (instead of local civil time).
-	searchConstellations(sTime, width) {
+	searchConstellations(sTime, width, short?) {
 		local v;
 
 		v = new Vector();
-		_iauConstellations.forEach(function(o) {
+		_constellations.forEach(function(o) {
+			if((short == true) && ((o.length < 5)
+				|| (o[5] != true)))
+				return;
 			if(isVisible(o, sTime, width))
 				v.append(o);
 		});
 
 		return(v);
+	}
+
+	// Returns boolean true if the given constellation is visible.
+	checkConstellation(id, h?, width?) {
+		local i, lst, o;
+
+		if(id == nil)
+			return(nil);
+		id = id.toLower();
+
+		if(h == nil)
+			h = 0;
+
+		if(width == nil)
+			width = horizonWidth;
+
+		lst = nil;
+
+		for(i = 1; i <= _constellations.length; i++) {
+			o = _constellations[i];
+			if((id == o[1].toLower()) || (id == o[2].toLower())) {
+				if(lst == nil)
+					lst = calendar.getLocalSiderealTime(h,
+						longitude);
+				return(isVisible(o, lst, width));
+			}
+		}
+
+		return(nil);
 	}
 
 	// Make sure a value is between 0 and 23.
@@ -276,5 +316,16 @@ class NightSky: object
 
 		// Return the alt-az coordinates.
 		return([alt.roundToDecimal(0), az.roundToDecimal(0)]);
+	}
+;
+
+gameSky: NightSky, PreinitObject
+	execute() {
+		if(calendar == nil)
+			calendar = gCalendar;
+		if(latitude == nil)
+			setLatitude(51);
+		if(longitude = nil)
+			setLongitude(0);
 	}
 ;
