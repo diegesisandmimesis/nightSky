@@ -325,7 +325,7 @@ gameSky: NightSky, PreinitObject
 			calendar = gCalendar;
 		if(latitude == nil)
 			setLatitude(51);
-		if(longitude = nil)
+		if(longitude == nil)
 			setLongitude(0);
 	}
 ;

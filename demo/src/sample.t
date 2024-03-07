@@ -26,15 +26,19 @@ gameMain: GameMainDef
 	newGame() {
 		local c, h, l, sky, altAz;
 
+		// Create a calendar with the current date June 22, 1979.
 		c = new Calendar(1979, 6, 22, 'EST-5EDT');
+
+		// Create a sky instance centered on Cambridge, Mass.
 		sky = new NightSky(42, -71, c);
 
 		h = 23;
 		"visible constellations:\n ";
-		l = sky.computeVisible(23, h, true);
+		l = sky.computeVisible(h, nil, true);
 		l.forEach(function(o) {
 			altAz = sky.raDecToAltAz(o[3], o[4], h);
-			if(altAz[1] < 0) return;
+			if(altAz[1] < 0)
+				return;
 			"\n\t<<o[1]>> (<<toString(altAz[1])>>,
 				<<toString(altAz[2])>>)\n ";
 		});
