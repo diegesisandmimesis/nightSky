@@ -26,12 +26,10 @@ gameMain: GameMainDef
 	newGame() {
 		local c, h, l, sky, altAz;
 
-		//c = new Calendar(1979, 6, 22, 'EST-5EDT');
-		//sky = new NightSky(42, -71, c);
-		c = new Calendar(2024, 3, 6);
-		sky = new NightSky(37, -122, c);
+		c = new Calendar(1979, 6, 22, 'EST-5EDT');
+		sky = new NightSky(42, -71, c);
 
-		h = 2;
+		h = 20;
 		"visible constellations:\n ";
 		l = sky.computeVisible(23, h);
 		l.forEach(function(o) {
