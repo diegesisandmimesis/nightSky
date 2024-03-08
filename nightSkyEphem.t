@@ -9,6 +9,8 @@
 
 #include "nightSky.h"
 
+#include "bignum.h"
+
 class Ephem: object
 	name = nil
 	abbr = nil
@@ -18,4 +20,16 @@ class Ephem: object
 
 	alt = nil
 	az = nil
+
+	construct(n?, a?, r?, d?, m?, a0?, a1?) {
+		name = n;
+		abbr = a;
+		ra = r;
+		dec = d;
+		major = m;
+		if(a0 != nil)
+			alt = new BigNumber(a0);
+		if(a1 != nil)
+			az = new BigNumber(a1);
+	}
 ;

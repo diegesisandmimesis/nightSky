@@ -99,6 +99,9 @@ class NightSky: object
 	// Holds a Calendar instance.
 	calendar = nil
 
+	// By default, only return "major" constellations.
+	onlyMajor = true
+
 	// The viewing position's latitude and lognitude as bignum
 	// radians.
 	_lat = nil
@@ -340,8 +343,6 @@ class NightSky: object
 
 	// Wrapper for the declination and right ascension checks.
 	isVisible(obj, lst, width) {
-		//return(checkDeclination(obj[4]) && checkRightAscension(obj[3],
-			//obj[4], lst, width));
 		return(checkDeclination(obj.dec) && checkRightAscension(obj.ra,
 			obj.dec, lst, width));
 	}

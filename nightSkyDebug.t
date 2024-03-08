@@ -6,8 +6,19 @@
 #include <en_us.h>
 
 #include "nightSky.h"
+#include "bignum.h"
 
 #ifdef __DEBUG
+
+class Coord: object
+	x = nil
+	y = nil
+
+	construct(v0?, v1?) {
+		x = v0;
+		y = v1;
+	}
+;
 
 DefineLiteralAction(SetPosition)
 	execAction() {
@@ -61,8 +72,14 @@ VerbRule(DebugSky) 'debug' 'sky': DebugSkyAction
 ;
 
 DefineSystemAction(MapSky)
-	_size = 20
+	// Size of the map, in characters.
+	_size = 21
+	_radius = 10
+
+	// Constellation labels.
 	_labels = nil
+
+	// Create the label list.  It's just A-Z, a-z.
 	_initLabels() {
 		local i;
 
@@ -70,14 +87,34 @@ DefineSystemAction(MapSky)
 		for(i = 0; i < 26; i++) _labels.append(makeString(65 + i));
 		for(i = 0; i < 26; i++) _labels.append(makeString(97 + i));
 	}
-	execSystemAction() {
-		local buf, i, l, sky, x, y, x0, y0, n, lbl;
 
+	_polarToRect(center, theta, r) {
+		local rad, v;
+
+		rad = theta.degreesToRadians();
+		v = new Coord(center.x - toInteger(rad.sine() * r),
+			center.y - toInteger(rad.cosine() * r));
+
+		if(v.x < 1) v.x = 1;
+		if(v.x > _size) v.x = _size;
+		if(v.y < 1) v.y = 1;
+		if(v.y > _size) v.y = _size;
+
+		return(v);
+	}
+
+	execSystemAction() {
+		local center, buf, i, l, sky, x, y, n, lbl, v;
+
+		// Create the labels.
 		if(_labels == nil)
 			_initLabels();
 
 		sky = gSky;
 
+		// Create a vector of string buffers, filling them with
+		// the "." character.
+		// Each buffer is a line of the map.
 		buf = new Vector(_size);
 		for(y = 1; y <= _size; y++) {
 			buf[y] = new StringBuffer();
@@ -85,22 +122,30 @@ DefineSystemAction(MapSky)
 				buf[y].append('.');
 		}
 
-		x0 = _size / 2;
-		y0 = _size / 2;
+		center = new Coord(_size / 2, _size / 2);
 
+		// Compute the alt-az coordinates of the visible
+		// constellations.
 		l = sky.computePositions(nil, nil, true);
+
+		// Vector to keep track of what to add to the legend.
 		lbl = new Vector();
+
+		// Draw a circle representing the horizon.
+		for(i = 0; i < 360; i += 5) {
+			n = new BigNumber(i);
+
+			v = _polarToRect(center, n, _radius);
+			buf[v.y][v.x] = ':';
+		}
+
 		l.forEach(function(o) {
-			n = _size - ((o.alt / 90) * _size);
-			x = x0 - toInteger(o.az.degreesToRadians().sine() * n);
-			y = y0 - toInteger(o.az.degreesToRadians().cosine() * n);
-			if(x < 1) x = 1;
-			if(x > _size) x = _size;
-			if(y < 1) y = 1;
-			if(y > _size) y = _size;
+			n = _radius - ((o.alt / 90) * _radius);
+			v = _polarToRect(center, o.az, n);
 			lbl.append(o);
-			buf[y][x] = _labels[lbl.length()];
+			buf[v.y][v.x] = _labels[lbl.length()];
 		});
+
 		i = 1;
 		buf.forEach(function(o) {
 			"<<o>>";
