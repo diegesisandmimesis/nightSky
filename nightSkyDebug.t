@@ -122,7 +122,7 @@ DefineSystemAction(MapSky)
 				buf[y].append('.');
 		}
 
-		center = new Coord(_size / 2, _size / 2);
+		center = new Coord(_size / 2 + 1, _size / 2 + 1);
 
 		// Compute the alt-az coordinates of the visible
 		// constellations.
