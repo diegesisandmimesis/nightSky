@@ -24,7 +24,7 @@
 versionInfo: GameID;
 gameMain: GameMainDef
 	newGame() {
-		local c, h, l, sky, altAz;
+		local c, h, l, sky;
 
 		// Create a calendar with the current date June 22, 1979.
 		c = new Calendar(1979, 6, 22, 'EST-5EDT');
@@ -34,13 +34,13 @@ gameMain: GameMainDef
 
 		h = 23;
 		"visible constellations:\n ";
-		l = sky.computeVisible(h, nil, true);
+
+		l = sky.computePositions(h, nil, true, function(o) {
+			return(o.alt >= 0);
+		});
 		l.forEach(function(o) {
-			altAz = sky.raDecToAltAz(o[3], o[4], h);
-			if(altAz[1] < 0)
-				return;
-			"\n\t<<o[1]>> (<<toString(altAz[1])>>,
-				<<toString(altAz[2])>>)\n ";
+			"\n\t<<o.name>> (<<toString(o.alt)>>,
+				<<toString(o.az)>>)\n ";
 		});
 		"\n total = <<toString(l.length)>>\n ";
 

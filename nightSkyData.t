@@ -14,95 +14,572 @@
 
 modify NightSky
 	_constellations = static [
-		[ 'Andromeda', 'And', 1, 37, true ],
-		[ 'Antlia', 'Ant', 10, -32, nil ],
-		[ 'Apus', 'Aps', 16, -75, nil ],
-		[ 'Aquarius', 'Aqr', 22, -9, true ],
-		[ 'Aquila', 'Aql', 20, 3, true ],
-		[ 'Ara', 'Ara', 17, -55, nil ],
-		[ 'Aries', 'Ari', 3, 21, true ],
-		[ 'Auriga', 'Aur', 6, 42, nil ],
-		[ 'Bootes', 'Boo', 15, 31, true ],
-		[ 'Caelum', 'Cae', 5, -36, nil ],
-		[ 'Camelopardalis', 'Cam', 9, 69, nil ],
-		[ 'Cancer', 'Cnc', 9, 20, true ],
-		[ 'Canes Venatici', 'CVn', 13, 40, nil ],
-		[ 'Canis Major', 'CMa', 7, -22, true ],
-		[ 'Canis Minor', 'CMi', 8, 6, true ],
-		[ 'Capricornus', 'Cap', 21, -18, true ],
-		[ 'Carina', 'Car', 9, -63, nil ],
-		[ 'Cassiopeia', 'Cas', 1, 62, true ],
-		[ 'Centaurus', 'Cen', 13, -47, nil ],
-		[ 'Cepheus', 'Cep', 3, 71, true ],
-		[ 'Cetus', 'Cet', 2, -7, nil ],
-		[ 'Chamaeleon', 'Cha', 11, -79, nil ],
-		[ 'Circinus', 'Cir', 15, -63, nil ],
-		[ 'Columba', 'Col', 6, -35, nil ],
-		[ 'Coma Berenices', 'Com', 13, 23, nil ],
-		[ 'Corona Australis', 'CrA', 19, -41, nil ],
-		[ 'Corona Borealis', 'CrB', 16, 33, nil ],
-		[ 'Corvus', 'Crv', 12, -18, nil ],
-		[ 'Crater', 'Crt', 11, -14, nil ],
-		[ 'Crux', 'Cru', 12, -60, nil ],
-		[ 'Cygnus', 'Cyg', 21, 45, true ],
-		[ 'Delphinus', 'Del', 21, 12, nil ],
-		[ 'Dorado', 'Dor', 5, -59, nil ],
-		[ 'Draco', 'Dra', 15, 67, true ],
-		[ 'Equuleus', 'Equ', 21, 8, nil ],
-		[ 'Eridanus', 'Eri', 3, -27, nil ],
-		[ 'Fornax', 'For', 3, -30, nil ],
-		[ 'Gemini', 'Gem', 7, 23, true ],
-		[ 'Grus', 'Gru', 22, -46, nil ],
-		[ 'Hercules', 'Her', 17, 27, nil ],
-		[ 'Horologium', 'Hor', 3, -53, nil ],
-		[ 'Hydra', 'Hya', 12, -13, nil ],
-		[ 'Hydrus', 'Hyi', 2, -68, nil ],
-		[ 'Indus', 'Ind', 22, -58, nil ],
-		[ 'Lacerta', 'Lac', 22, 46, nil ],
-		[ 'Leo', 'Leo', 11, 13, true ],
-		[ 'Leo Minor', 'LMi', 10, 32, nil ],
-		[ 'Lepus', 'Lep', 6, -19, nil ],
-		[ 'Libra', 'Lib', 15, -15, true ],
-		[ 'Lupus', 'Lup', 15, -41, nil ],
-		[ 'Lynx', 'Lyn', 8, 47, nil ],
-		[ 'Lyra', 'Lyr', 19, 37, true ],
-		[ 'Mensa', 'Men', 5, -76, nil ],
-		[ 'Microscopium', 'Mic', 21, -36, nil ],
-		[ 'Monoceros', 'Mon', 7, 0, nil ],
-		[ 'Musca', 'Mus', 13, -70, nil ],
-		[ 'Norma', 'Nor', 16, -51, nil ],
-		[ 'Octans', 'Oct', 23, -82, nil ],
-		[ 'Ophiuchus', 'Oph', 17, -6, nil ],
-		[ 'Orion', 'Ori', 6, 6, true ],
-		[ 'Pavo', 'Pav', 20, -64, nil ],
-		[ 'Pegasus', 'Peg', 23, 19, true ],
-		[ 'Perseus', 'Per', 3, 45, nil ],
-		[ 'Phoenix', 'Phe', 1, -47, nil ],
-		[ 'Pictor', 'Pic', 6, -53, nil ],
-		[ 'Pisces', 'Psc', 0, 14, true ],
-		[ 'Piscis Austrinus', 'PsA', 22, -29, nil ],
-		[ 'Puppis', 'Pup', 7, -31, nil ],
-		[ 'Pyxis', 'Pyx', 9, -27, nil ],
-		[ 'Reticulum', 'Ret', 4, -58, nil ],
-		[ 'Sagitta', 'Sge', 20, 19, nil ],
-		[ 'Sagittarius', 'Sgr', 19, -28, true ],
-		[ 'Scorpius', 'Sco', 17, -27, true ],
-		[ 'Sculptor', 'Scl', 0, -32, nil ],
-		[ 'Scutum', 'Sct', 19, -8, nil ],
-		[ 'Serpens (Caput)', 'Ser', 16, 11, true ],
-		[ 'Serpens (Cauda)', 'Ser', 18, -3, true ],
-		[ 'Sextans', 'Sex', 10, -1, nil ],
-		[ 'Taurus', 'Tau', 5, 15, true ],
-		[ 'Telescopium', 'Tel', 19, -51, nil ],
-		[ 'Triangulum', 'Tri', 2, 31, nil ],
-		[ 'Triangulum Australe', 'TrA', 16, -65, nil ],
-		[ 'Tucana', 'Tuc', 24, -64, nil ],
-		[ 'Ursa Major', 'UMa', 11, 51, true ],
-		[ 'Ursa Minor', 'UMi', 15, 78, nil ],
-		[ 'Vela', 'Vel', 10, -47, nil ],
-		[ 'Virgo', 'Vir', 13, -4, true ],
-		[ 'Volans', 'Vol', 8, -68, nil ],
-		[ 'Vulpecula', 'Vul', 20, 24, nil ],
-		[ 'Pleiades', 'M45', 4, 24, true ]
+		object: Ephem {
+			name = 'Andromeda'
+			abbr = 'And'
+			ra = 1
+			dec = 37
+			major = true
+		},
+		object: Ephem {
+			name = 'Antlia'
+			abbr = 'Ant'
+			ra = 10
+			dec = -32
+		},
+		object: Ephem {
+			name = 'Apus'
+			abbr = 'Aps'
+			ra = 16
+			dec = -75
+		},
+		object: Ephem {
+			name = 'Aquarius'
+			abbr = 'Aqr'
+			ra = 22
+			dec = -9
+			major = true
+		},
+		object: Ephem {
+			name = 'Aquila'
+			abbr = 'Aql'
+			ra = 20
+			dec = 3
+			major = true
+		},
+		object: Ephem {
+			name = 'Ara'
+			abbr = 'Ara'
+			ra = 17
+			dec = -55
+		},
+		object: Ephem {
+			name = 'Aries'
+			abbr = 'Ari'
+			ra = 3
+			dec = 21
+			major = true
+		},
+		object: Ephem {
+			name = 'Auriga'
+			abbr = 'Aur'
+			ra = 6
+			dec = 42
+		},
+		object: Ephem {
+			name = 'Bootes'
+			abbr = 'Boo'
+			ra = 15
+			dec = 31
+			major = true
+		},
+		object: Ephem {
+			name = 'Caelum'
+			abbr = 'Cae'
+			ra = 5
+			dec = -36
+		},
+		object: Ephem {
+			name = 'Camelopardalis'
+			abbr = 'Cam'
+			ra = 9
+			dec = 69
+		},
+		object: Ephem {
+			name = 'Cancer'
+			abbr = 'Cnc'
+			ra = 9
+			dec = 20
+			major = true
+		},
+		object: Ephem {
+			name = 'Canes Venatici'
+			abbr = 'CVn'
+			ra = 13
+			dec = 40
+		},
+		object: Ephem {
+			name = 'Canis Major'
+			abbr = 'CMa'
+			ra = 7
+			dec = -22
+			major = true
+		},
+		object: Ephem {
+			name = 'Canis Minor'
+			abbr = 'CMi'
+			ra = 8
+			dec = 6
+		},
+		object: Ephem {
+			name = 'Capricornus'
+			abbr = 'Cap'
+			ra = 21
+			dec = -18
+			major = true
+		},
+		object: Ephem {
+			name = 'Carina'
+			abbr = 'Car'
+			ra = 9
+			dec = -63
+		},
+		object: Ephem {
+			name = 'Cassiopeia'
+			abbr = 'Cas'
+			ra = 1
+			dec = 62
+			major = true
+		},
+		object: Ephem {
+			name = 'Centaurus'
+			abbr = 'Cen'
+			ra = 13
+			dec = -47
+		},
+		object: Ephem {
+			name = 'Cepheus'
+			abbr = 'Cep'
+			ra = 3
+			dec = 71
+			major = true
+		},
+		object: Ephem {
+			name = 'Cetus'
+			abbr = 'Cet'
+			ra = 2
+			dec = -7
+		},
+		object: Ephem {
+			name = 'Chamaeleon'
+			abbr = 'Cha'
+			ra = 11
+			dec = -79
+		},
+		object: Ephem {
+			name = 'Circinus'
+			abbr = 'Cir'
+			ra = 15
+			dec = -63
+		},
+		object: Ephem {
+			name = 'Columba'
+			abbr = 'Col'
+			ra = 6
+			dec = -35
+		},
+		object: Ephem {
+			name = 'Coma Berenices'
+			abbr = 'Com'
+			ra = 13
+			dec = 23
+		},
+		object: Ephem {
+			name = 'Corona Australis'
+			abbr = 'CrA'
+			ra = 19
+			dec = -41
+		},
+		object: Ephem {
+			name = 'Corona Borealis'
+			abbr = 'CrB'
+			ra = 16
+			dec = 33
+		},
+		object: Ephem {
+			name = 'Corvus'
+			abbr = 'Crv'
+			ra = 12
+			dec = -18
+		},
+		object: Ephem {
+			name = 'Crater'
+			abbr = 'Crt'
+			ra = 11
+			dec = -14
+		},
+		object: Ephem {
+			name = 'Crux'
+			abbr = 'Cru'
+			ra = 12
+			dec = -60
+		},
+		object: Ephem {
+			name = 'Cygnus'
+			abbr = 'Cyg'
+			ra = 21
+			dec = 45
+			major = true
+		},
+		object: Ephem {
+			name = 'Delphinus'
+			abbr = 'Del'
+			ra = 21
+			dec = 12
+		},
+		object: Ephem {
+			name = 'Dorado'
+			abbr = 'Dor'
+			ra = 5
+			dec = -59
+		},
+		object: Ephem {
+			name = 'Draco'
+			abbr = 'Dra'
+			ra = 15
+			dec = 67
+			major = true
+		},
+		object: Ephem {
+			name = 'Equuleus'
+			abbr = 'Equ'
+			ra = 21
+			dec = 8
+		},
+		object: Ephem {
+			name = 'Eridanus'
+			abbr = 'Eri'
+			ra = 3
+			dec = -27
+		},
+		object: Ephem {
+			name = 'Fornax'
+			abbr = 'For'
+			ra = 3
+			dec = -30
+		},
+		object: Ephem {
+			name = 'Gemini'
+			abbr = 'Gem'
+			ra = 7
+			dec = 23
+			major = true
+		},
+		object: Ephem {
+			name = 'Grus'
+			abbr = 'Gru'
+			ra = 22
+			dec = -46
+		},
+		object: Ephem {
+			name = 'Hercules'
+			abbr = 'Her'
+			ra = 17
+			dec = 27
+		},
+		object: Ephem {
+			name = 'Horologium'
+			abbr = 'Hor'
+			ra = 3
+			dec = -53
+		},
+		object: Ephem {
+			name = 'Hydra'
+			abbr = 'Hya'
+			ra = 12
+			dec = -13
+		},
+		object: Ephem {
+			name = 'Hydrus'
+			abbr = 'Hyi'
+			ra = 2
+			dec = -68
+		},
+		object: Ephem {
+			name = 'Indus'
+			abbr = 'Ind'
+			ra = 22
+			dec = -58
+		},
+		object: Ephem {
+			name = 'Lacerta'
+			abbr = 'Lac'
+			ra = 22
+			dec = 46
+		},
+		object: Ephem {
+			name = 'Leo'
+			abbr = 'Leo'
+			ra = 11
+			dec = 13
+			major = true
+		},
+		object: Ephem {
+			name = 'Leo Minor'
+			abbr = 'LMi'
+			ra = 10
+			dec = 32
+		},
+		object: Ephem {
+			name = 'Lepus'
+			abbr = 'Lep'
+			ra = 6
+			dec = -19
+		},
+		object: Ephem {
+			name = 'Libra'
+			abbr = 'Lib'
+			ra = 15
+			dec = -15
+			major = true
+		},
+		object: Ephem {
+			name = 'Lupus'
+			abbr = 'Lup'
+			ra = 15
+			dec = -41
+		},
+		object: Ephem {
+			name = 'Lynx'
+			abbr = 'Lyn'
+			ra = 8
+			dec = 47
+		},
+		object: Ephem {
+			name = 'Lyra'
+			abbr = 'Lyr'
+			ra = 19
+			dec = 37
+			major = true
+		},
+		object: Ephem {
+			name = 'Mensa'
+			abbr = 'Men'
+			ra = 5
+			dec = -76
+		},
+		object: Ephem {
+			name = 'Microscopium'
+			abbr = 'Mic'
+			ra = 21
+			dec = -36
+		},
+		object: Ephem {
+			name = 'Monoceros'
+			abbr = 'Mon'
+			ra = 7
+			dec = 0
+		},
+		object: Ephem {
+			name = 'Musca'
+			abbr = 'Mus'
+			ra = 13
+			dec = -70
+		},
+		object: Ephem {
+			name = 'Norma'
+			abbr = 'Nor'
+			ra = 16
+			dec = -51
+		},
+		object: Ephem {
+			name = 'Octans'
+			abbr = 'Oct'
+			ra = 23
+			dec = -82
+		},
+		object: Ephem {
+			name = 'Ophiuchus'
+			abbr = 'Oph'
+			ra = 17
+			dec = -6
+		},
+		object: Ephem {
+			name = 'Orion'
+			abbr = 'Ori'
+			ra = 6
+			dec = 6
+			major = true
+		},
+		object: Ephem {
+			name = 'Pavo'
+			abbr = 'Pav'
+			ra = 20
+			dec = -64
+		},
+		object: Ephem {
+			name = 'Pegasus'
+			abbr = 'Peg'
+			ra = 23
+			dec = 19
+			major = true
+		},
+		object: Ephem {
+			name = 'Perseus'
+			abbr = 'Per'
+			ra = 3
+			dec = 45
+		},
+		object: Ephem {
+			name = 'Phoenix'
+			abbr = 'Phe'
+			ra = 1
+			dec = -47
+		},
+		object: Ephem {
+			name = 'Pictor'
+			abbr = 'Pic'
+			ra = 6
+			dec = -53
+		},
+		object: Ephem {
+			name = 'Pisces'
+			abbr = 'Psc'
+			ra = 0
+			dec = 14
+			major = true
+		},
+		object: Ephem {
+			name = 'Piscis Austrinus'
+			abbr = 'PsA'
+			ra = 22
+			dec = -29
+		},
+		object: Ephem {
+			name = 'Puppis'
+			abbr = 'Pup'
+			ra = 7
+			dec = -31
+		},
+		object: Ephem {
+			name = 'Pyxis'
+			abbr = 'Pyx'
+			ra = 9
+			dec = -27
+		},
+		object: Ephem {
+			name = 'Reticulum'
+			abbr = 'Ret'
+			ra = 4
+			dec = -58
+		},
+		object: Ephem {
+			name = 'Sagitta'
+			abbr = 'Sge'
+			ra = 20
+			dec = 19
+		},
+		object: Ephem {
+			name = 'Sagittarius'
+			abbr = 'Sgr'
+			ra = 19
+			dec = -28
+			major = true
+		},
+		object: Ephem {
+			name = 'Scorpius'
+			abbr = 'Sco'
+			ra = 17
+			dec = -27
+			major = true
+		},
+		object: Ephem {
+			name = 'Sculptor'
+			abbr = 'Scl'
+			ra = 0
+			dec = -32
+		},
+		object: Ephem {
+			name = 'Scutum'
+			abbr = 'Sct'
+			ra = 19
+			dec = -8
+		},
+		object: Ephem {
+			name = 'Serpens (Caput)'
+			abbr = 'Ser'
+			ra = 16
+			dec = 11
+			major = true
+		},
+		object: Ephem {
+			name = 'Serpens (Cauda)'
+			abbr = 'Ser'
+			ra = 18
+			dec = -3
+			major = true
+		},
+		object: Ephem {
+			name = 'Sextans'
+			abbr = 'Sex'
+			ra = 10
+			dec = -1
+		},
+		object: Ephem {
+			name = 'Taurus'
+			abbr = 'Tau'
+			ra = 5
+			dec = 15
+			major = true
+		},
+		object: Ephem {
+			name = 'Telescopium'
+			abbr = 'Tel'
+			ra = 19
+			dec = -51
+		},
+		object: Ephem {
+			name = 'Triangulum'
+			abbr = 'Tri'
+			ra = 2
+			dec = 31
+		},
+		object: Ephem {
+			name = 'Triangulum Australe'
+			abbr = 'TrA'
+			ra = 16
+			dec = -65
+		},
+		object: Ephem {
+			name = 'Tucana'
+			abbr = 'Tuc'
+			ra = 24
+			dec = -64
+		},
+		object: Ephem {
+			name = 'Ursa Major'
+			abbr = 'UMa'
+			ra = 11
+			dec = 51
+			major = true
+		},
+		object: Ephem {
+			name = 'Ursa Minor'
+			abbr = 'UMi'
+			ra = 15
+			dec = 78
+		},
+		object: Ephem {
+			name = 'Vela'
+			abbr = 'Vel'
+			ra = 10
+			dec = -47
+		},
+		object: Ephem {
+			name = 'Virgo'
+			abbr = 'Vir'
+			ra = 13
+			dec = -4
+			major = true
+		},
+		object: Ephem {
+			name = 'Volans'
+			abbr = 'Vol'
+			ra = 8
+			dec = -68
+		},
+		object: Ephem {
+			name = 'Vulpecula'
+			abbr = 'Vul'
+			ra = 20
+			dec = 24
+		},
+		object: Ephem {
+			name = 'Pleiades'
+			abbr = 'M45'
+			ra = 4
+			dec = 24
+			major = true
+		}
 	]
 ;

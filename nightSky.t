@@ -2,6 +2,74 @@
 //
 // nightSky.t
 //
+//	A TADS3/adv3 module for computing the constellations visible in
+//	the night sky.
+//
+//	It provides a very simple ephemeris consisting of the IAU
+//	designated constellations plus the Pleiades.
+//
+//	This module depends on the calendar module:
+//		https://github.com/diegesisandmimesis/calendar
+//
+//	The computations are VERY approximate, using integer angles,
+//	rounding times to the nearest hour, and so on.  It is only intended
+//	to provide a list of constellations visible at an approxiate
+//	time, and (optionally) their approximate positions in the sky.
+//
+//
+// USAGE:
+//
+//	Create a NightSky instance:
+//
+//		// Create a calendar with the time midnight on June 22, 1979.
+//		local c = new Calendar(1979, 6, 22, 'EST-5EDT');
+//
+//		// Create a NightSky instance centered on Cambridge, Mass.
+//		// First two args are latitude and longitude, third is
+//		// the calendar instance to use in the NightSky instance.
+//		local sky = new NightSky(42, -71, c);
+//
+//	Get the visible constellations:
+//
+//		// Returns a list of the visible constellations at
+//		// local time 23:00, with a horizon radius of 5 hours
+//		// of right ascension (first and second arguments).  The
+//		// third argument is a boolean flag.  If true, then only
+//		// "major" constellations will be returned.
+//		local visible = sky.computeVisible(23, 5, true);
+//
+//	Get approximate positions of the visible constellations:
+//
+//		// Returns a list of the visible constellations, including
+//		// their approximate positions in local altitude-azimuth
+//		// coordinates.
+//		// Args are the same as computeVisible() above, with the
+//		// addition of the fourth argument, which is a callback
+//		// function which will be called with each matching
+//		// constellation.  In this case, the fuction checks that
+//		// the constellation's computed altitude is positive.  If
+//		// the callback does not return true, the constellation will
+//		// not be included in the results of computeVisible().
+//		local pos = sky.computePositions(23, 5, true, function(o) {
+//			return(o.alt >= 0);
+//		});
+//
+//	Determine if the given constellation is visible:
+//
+//		// Returns boolean true if the constellation is visible,
+//		// nil otherwise.
+//		// First arg is a string, which will be checked for an
+//		// exact, case-insensitive match against the constellation
+//		// names and abbreviations.  Second arg is the local hour.
+//		local vis = sky.checkConstellation('draco', 23);
+//
+//
+//	In the above examples almost all the arguments are optional (the
+//	exception being the search term in checkConstellation()).  If
+//	an argument isn't given (or is nil) then local conditions will
+//	be used.
+//
+//
 #include <adv3.h>
 #include <en_us.h>
 
@@ -62,6 +130,16 @@ class NightSky: object
 		calendar = cal;
 	}
 
+	// Utility methods for canonicalizing common arguments with
+	// possible defaults.
+	resolveHour(v?) {
+		return((v == nil) ? calendar.getHour() : toInteger(v));
+	}
+	resolveWidth(v?) {
+		return((v == nil) ? horizonWidth : toInteger(v));
+	}
+
+	// Convenience method for setting the latitude and longitude.
 	setPosition(l0, l1) {
 		setLatitude(l0);
 		setLongitude(l1);
@@ -82,34 +160,41 @@ class NightSky: object
 		_long = new BigNumber(longitude).degreesToRadians();
 	}
 
-	// Returns a list of the currently-visible constellations.
+	// Returns a list of the currently-visible constellations (each
+	// list element is an Ephem instance).
 	// First arg is the local hour.
 	// Second arg is the width of the horizon, in units of
 	// hours of right ascension.  Default is 5, which means
 	// that the current meridian +/- 5 hours, or ~11 hours
 	// or just under half the total sky is visible.
 	computeVisible(h?, width?, short?) {
-		local st;
+		local lst;
 
-		st = calendar.getLocalSiderealTime(h, longitude);
+		// Handle defaults.
+		h = resolveHour(h);
+		width = resolveWidth(width);
 
-		if(width == nil)
-			width = horizonWidth;
+		// Get the local sidereal time.
+		lst = calendar.getLocalSiderealTime(h, longitude);
 
-		return(searchConstellations(st, width, short));
+		return(searchConstellations(lst, width, short));
 	}
 
 	// Same as computeVisible() above, but the first argument is
 	// is local sidereal time (instead of local civil time).
-	searchConstellations(sTime, width, short?) {
+	searchConstellations(lst, width, short?) {
 		local v;
 
 		v = new Vector();
 		_constellations.forEach(function(o) {
-			if((short == true) && ((o.length < 5)
-				|| (o[5] != true)))
+			// If we got the "short" flag, we only care
+			// about "major" constellations.
+			if((short == true) && (o.major != true))
 				return;
-			if(isVisible(o, sTime, width))
+
+			// Check if the constellation is visible, and
+			// add it to the return list if it is.
+			if(isVisible(o, lst, width))
 				v.append(o);
 		});
 
@@ -120,24 +205,36 @@ class NightSky: object
 	checkConstellation(id, h?, width?) {
 		local i, lst, o;
 
+		// We need an ID.
 		if(id == nil)
 			return(nil);
+
+		// Convert to lower case.
 		id = id.toLower();
 
-		if(h == nil)
-			h = 0;
+		// Handle defaults.
+		h = resolveHour(h);
+		width = resolveWidth(width);
 
-		if(width == nil)
-			width = horizonWidth;
-
+		// We compute the local sidereal time only when we
+		// have to.
 		lst = nil;
 
 		for(i = 1; i <= _constellations.length; i++) {
 			o = _constellations[i];
-			if((id == o[1].toLower()) || (id == o[2].toLower())) {
+
+			// Check to see if we've matched a name or
+			// abbreviation.
+			if((id == o.name.toLower())
+				|| (id == o.abbr.toLower())) {
+
+				// See if we have to compute the local
+				// sidereal time.
 				if(lst == nil)
 					lst = calendar.getLocalSiderealTime(h,
 						longitude);
+
+				// Check the visibility.
 				return(isVisible(o, lst, width));
 			}
 		}
@@ -175,13 +272,13 @@ class NightSky: object
 	// celestial pole (the north celestial pole in the northern
 	// hemisphere, the south in the southern), but less the
 	// further away from the pole we get.
-	checkRightAscension(ra, dec, sTime, width) {
+	checkRightAscension(ra, dec, lst, width) {
 		// Instead of trying to be clever, we just split this
 		// into a different method for each hemisphere.
 		if(latitude >= 0) {
-			return(_checkRANorth(ra, dec, sTime, width));
+			return(_checkRANorth(ra, dec, lst, width));
 		} else {
-			return(_checkRASouth(ra, dec, sTime, width));
+			return(_checkRASouth(ra, dec, lst, width));
 		}
 	}
 
@@ -199,12 +296,12 @@ class NightSky: object
 	// but we ALSO want the range less than 4, because
 	// (23 - 5) % 24 = 18, but (23 + 5) % 24 = 4.  So we can't just
 	// check between 18 and 28, because "hour 28" is hour 04.
-	_checkRA(ra, sTime, width) {
+	_checkRA(ra, lst, width) {
 		local raMin, raMax;
 
 		// Compute (LST - width) % 24 and (LST + width) % 24.
-		raMin = modTime(sTime - width);
-		raMax = modTime(sTime + width);
+		raMin = modTime(lst - width);
+		raMax = modTime(lst + width);
 
 		// Handle the simple case, were we DIDN'T "wrap around",
 		// so we've only got a single range.
@@ -225,26 +322,51 @@ class NightSky: object
 		return(true);
 	}
 
-	_checkRANorth(ra, dec, sTime, width) {
+	_checkRANorth(ra, dec, lst, width) {
 		// We can see everything within our latitude of the pole.
 		if(dec > (90 - latitude))
 			return(true);
 
-		return(_checkRA(ra, sTime, width));
+		return(_checkRA(ra, lst, width));
 	}
 
-	_checkRASouth(ra, dec, sTime, width) {
+	_checkRASouth(ra, dec, lst, width) {
 		// We can see everything within our latitude of the pole.
 		if(dec < (-90 - latitude))
 			return(true);
 
-		return(_checkRA(ra, sTime, width));
+		return(_checkRA(ra, lst, width));
 	}
 
 	// Wrapper for the declination and right ascension checks.
-	isVisible(obj, sTime, width) {
-		return(checkDeclination(obj[4]) && checkRightAscension(obj[3],
-			obj[4], sTime, width));
+	isVisible(obj, lst, width) {
+		//return(checkDeclination(obj[4]) && checkRightAscension(obj[3],
+			//obj[4], lst, width));
+		return(checkDeclination(obj.dec) && checkRightAscension(obj.ra,
+			obj.dec, lst, width));
+	}
+
+	// Computes the alt-az coordinates of the visible constellations,
+	// returning them as a list of Ephem instances.
+	computePositions(h?, width?, short?, cb?) {
+		local altAz, l, v;
+
+		h = resolveHour(h);
+		width = resolveWidth(width);
+
+		l = computeVisible(h, width, short);
+		v = new Vector(l.length);
+		l.forEach(function(o) {
+			altAz = raDecToAltAz(o.ra, o.dec, h);
+			o.alt = altAz[1];
+			o.az = altAz[2];
+			if((dataTypeXlat(cb) != TypeNil)
+				&& (cb(o) != true))
+				return;
+			v.append(o);
+		});
+
+		return(v);
 	}
 
 	// Compute right ascension and declination to altitude and
@@ -319,13 +441,30 @@ class NightSky: object
 	}
 ;
 
+// Global NightSky instance tied to the global calendar.
 gameSky: NightSky, PreinitObject
+	execBeforeMe = static [ gameEnvironment, gameCalendar ]
 	execute() {
-		if(calendar == nil)
-			calendar = gCalendar;
+		calendar = gCalendar;
 		if(latitude == nil)
-			setLatitude(51);
+			latitude = 51;
 		if(longitude == nil)
-			setLongitude(0);
+			longitude = 0;
+
+		setLatitude(latitude);
+		setLongitude(longitude);
+	}
+;
+
+modify gameEnvironment
+	latitude = nil
+	longitude = nil
+
+	execute() {
+		inherited();
+		if(latitude != nil)
+			gameSky.latitude = latitude;
+		if(longitude != nil)
+			gameSky.longitude = longitude;
 	}
 ;
