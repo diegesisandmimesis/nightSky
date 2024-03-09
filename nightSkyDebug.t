@@ -59,6 +59,7 @@ DefineSystemAction(DebugSky)
 		"<.p> ";
 		"Season: <<c.getSeasonName()>>\n ";
 		"Phase of Moon: <<c.getMoonPhaseName()>>\n ";
+		"Position of Moon: <<toString(sky.getMoonMeridianPosition())>>\n ";
 		"Visible constellations:\n ";
 		l = sky.computePositions(nil, nil, true);
 		l.forEach(function(o) {
@@ -76,6 +77,9 @@ DefineSystemAction(MapSky)
 	_size = 21
 	_radius = 10
 
+	_sizeX = 41
+	_sizeY = 21
+
 	// Constellation labels.
 	_labels = nil
 
@@ -92,19 +96,20 @@ DefineSystemAction(MapSky)
 		local rad, v;
 
 		rad = theta.degreesToRadians();
-		v = new Coord(center.x - toInteger(rad.sine() * r),
+		v = new Coord(center.x - toInteger(rad.sine() * r * 2),
 			center.y - toInteger(rad.cosine() * r));
 
 		if(v.x < 1) v.x = 1;
-		if(v.x > _size) v.x = _size;
+		if(v.x > _sizeX) v.x = _sizeX;
 		if(v.y < 1) v.y = 1;
-		if(v.y > _size) v.y = _size;
+		if(v.y > _sizeY) v.y = _sizeY;
 
 		return(v);
 	}
 
 	execSystemAction() {
-		local center, buf, i, l, sky, x, y, n, lbl, v;
+		local center, buf, i, l, sky, x, y, n, v;
+		local x0, m, len;
 
 		// Create the labels.
 		if(_labels == nil)
@@ -118,39 +123,64 @@ DefineSystemAction(MapSky)
 		buf = new Vector(_size);
 		for(y = 1; y <= _size; y++) {
 			buf[y] = new StringBuffer();
-			for(x = 1; x <= _size; x++)
+			for(x = 1; x <= _sizeX; x++)
 				buf[y].append('.');
 		}
 
-		center = new Coord(_size / 2 + 1, _size / 2 + 1);
+		// Center of the ASCII map.
+		center = new Coord(_sizeX / 2 + 1, _sizeY / 2 + 1);
 
 		// Compute the alt-az coordinates of the visible
 		// constellations.
 		l = sky.computePositions(nil, nil, true);
 
+		// If the moon is visible, add it to the list of objects.
+		m = sky.getMoon();
+		if(m.alt > 0)
+			l.append(m);
+
 		// Vector to keep track of what to add to the legend.
-		lbl = new Vector();
 
 		// Draw a circle representing the horizon.
-		for(i = 0; i < 360; i += 5) {
+		for(i = 0; i < 360; i += 3) {
 			n = new BigNumber(i);
 
 			v = _polarToRect(center, n, _radius);
-			buf[v.y][v.x] = ':';
+			buf[v.y][v.x] = '*';
 		}
 
+		// Place the map markers.
+		// Here we use the abbreviations, roughly centered on
+		// the constellation's centroid.
 		l.forEach(function(o) {
+			// The length of the displacement from the
+			// center point.
 			n = _radius - ((o.alt / 90) * _radius);
+
+			// Convert the angle and distance to rectangular
+			// coordinates.
 			v = _polarToRect(center, o.az, n);
-			lbl.append(o);
-			buf[v.y][v.x] = _labels[lbl.length()];
+
+			// First, try to offset the label by half its width.
+			len = o.abbr.length;
+			x0 = v.x - (len / 2);
+
+			// Bounds check.
+			if(x0 < 1)
+				x0 = v.x;
+			if(x0 + len > _sizeX)
+				x0 = _sizeX - len;
+
+			// Add the marker.
+			buf[v.y].splice(x0, len, o.abbr);
 		});
 
+		// Output the map, along with the legend.
 		i = 1;
 		buf.forEach(function(o) {
 			"<<o>>";
-			if(i <= lbl.length) {
-				"   <<_labels[i]>>: <<lbl[i].name>>";
+			if(i <= l.length) {
+				"   <<l[i].abbr>>: <<l[i].name>>";
 			}
 			"\n ";
 			i += 1;

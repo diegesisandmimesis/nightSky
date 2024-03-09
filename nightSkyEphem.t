@@ -32,4 +32,9 @@ class Ephem: object
 		if(a1 != nil)
 			az = new BigNumber(a1);
 	}
+
+	clear() {
+		alt = nil;
+		az = nil;
+	}
 ;
