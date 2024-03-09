@@ -139,7 +139,7 @@ DefineSystemAction(MapSky)
 		if(m.alt > 0)
 			l.append(m);
 
-		// Vector to keep track of what to add to the legend.
+		l.append(sky.getPolaris());
 
 		// Draw a circle representing the horizon.
 		for(i = 0; i < 360; i += 3) {
@@ -180,7 +180,7 @@ DefineSystemAction(MapSky)
 		buf.forEach(function(o) {
 			"<<o>>";
 			if(i <= l.length) {
-				"   <<l[i].abbr>>: <<l[i].name>>";
+				" <<l[i].abbr>>:\t<<l[i].name>>";
 			}
 			"\n ";
 			i += 1;

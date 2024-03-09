@@ -123,6 +123,7 @@ class NightSky: object
 	_lunarDec = 23
 
 	moonEphem = nil
+	polarisEphem = nil
 
 	// To hold our list of constellations.
 	// Supplied by nightSkyData.t
@@ -553,7 +554,7 @@ class NightSky: object
 		// Create the Ephem instance if it doesn't
 		// already exist.
 		if(moonEphem == nil)
-			moonEphem = new Ephem('Moon', 'Moon');
+			moonEphem = new Ephem('Moon', '@');
 
 		if(moonEphem.alt == nil) {
 			moonEphem.ra = getMoonRA();
@@ -571,6 +572,20 @@ class NightSky: object
 		_lunarRADeg = nil;
 		if(moonEphem != nil)
 			moonEphem.clear();
+	}
+
+	getPolaris(h?) {
+		local altAz;
+
+		if(polarisEphem == nil) {
+			polarisEphem = new Ephem('Polaris', '*', 3, 89);
+			altAz = raDecToAltAz(polarisEphem.ra, polarisEphem.dec,
+				h);
+			polarisEphem.alt = altAz[1];
+			polarisEphem.az = altAz[2];
+		}
+
+		return(polarisEphem);
 	}
 ;
 
