@@ -11,6 +11,9 @@
 //	This module depends on the calendar module:
 //		https://github.com/diegesisandmimesis/calendar
 //
+//
+// DISCLAIMER:
+//
 //	The computations are VERY approximate, using integer angles,
 //	rounding times to the nearest hour, and so on.  It is only intended
 //	to provide a list of constellations visible at an approxiate
@@ -68,6 +71,68 @@
 //	exception being the search term in checkConstellation()).  If
 //	an argument isn't given (or is nil) then local conditions will
 //	be used.
+//
+//
+// LUNAR POSITION
+//
+//	To get the approximate position of the moon relative to the
+//	local meridian (the line from north to south passing directly
+//	overhead):
+//
+//		// Get the offset in degrees at 23:00 local time.
+//		local off = sky.getMoonMeridianPosition(23);
+//
+//	The argument is optional.  The return value will be the offset
+//	of the lunar position relative to the local meridian, in integer
+//	degrees, in the range from -180 to 180.
+//
+//	The approximate altitude and azimuth of the moon can be obtained
+//	via:
+//
+//		// Get an Ephem instance for the moon, with alt-az
+//		// coordinates computed, for local hour 04:00.
+//		local moon = sky.getMoon(4);
+//
+//	The argument is optional.  The return value will be an Ephem
+//	instance with the current (for the given hour or the current-for
+//	the-sky-instance time if none is given) altitude-azimuth coordinates
+//	computed.  The values will be available as moon.alt and moon.az.
+//
+//	NOTE:	The lunar declination actually varies between +/- 28.725
+//		degrees, but the module uses a static declination (23 by
+//		default).  This allows accurate-ish computation of the
+//		lunar position relative to the meridian (and therefore
+//		whether or not the moon is visible), but doesn't accurately
+//		reflect the moon's actual north-south position in the sky.
+//
+//
+// GLOBAL GAME SKY
+//
+//	In addition to the usage above (creating standalone NightSky instances)
+//	the module supplies a global NightSky instance, gameSky.
+//
+//	By default it uses the global calendar (gameCalendar) from the
+//	calendar module.
+//
+//	The module provides these macros:
+//
+//		gSky			returns the global sky object
+//		gSetPosition(la, lo)	sets the latitude and longitude of
+//						the global sky object
+//
+//
+// GLOBAL GAME ENVIRONMENT
+//
+//	This module extends the gameEnvironment instance provided by the
+//	calendar module to include latitude and longitude.  Example of use:
+//
+//		// Configures the time to be midnight on June 22, 1979, and
+//		// the position to be 42 deg N latitude, 71 deg W longitude.
+//		modify gameEnvironment
+//			currentDate = new Date(1979, 6, 22, 0, 0, 0, 'EST-5EDT')
+//			latitude = 42
+//			longitude = -71
+//		;
 //
 //
 #include <adv3.h>
