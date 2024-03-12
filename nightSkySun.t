@@ -57,7 +57,9 @@ class SunEphem: Ephem
 		g = g.degreesToRadians();
 
 		lambda = l + (1.915 * g.sine()) + (0.020 * (2 * g).sine());
+		lambda = lambda.degreesToRadians();
 		eps = 23.439 - (0.0000004 * n);
+		eps = eps.degreesToRadians();
 		ra = atan2(eps.cosine() * lambda.sine(), lambda.cosine());
 
 		dec = (eps.sine() * lambda.sine()).arcsine();
@@ -87,6 +89,13 @@ class SunEphem: Ephem
 			else
 				return(-(_pi / 2));
 		}
+/*
+		if(x > 0)
+			return(2 * (y / (((x * x) + (y * y)).sqrt + x)).arctangent());
+		if(y != 0)
+			return(2 * ((((x * x) + (y * y)).sqrt - x) / y).arctangent());
+		return(_pi);
+*/
 	}
 
 	clear() {
