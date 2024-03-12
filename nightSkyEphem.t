@@ -22,11 +22,11 @@ class Ephem: object
 	az = nil
 
 	construct(n?, a?, r?, d?, m?, a0?, a1?) {
-		name = n;
-		abbr = a;
-		ra = r;
-		dec = d;
-		major = m;
+		if(n != nil) name = n;
+		if(a != nil) abbr = a;
+		if(r != nil) ra = r;
+		if(d != nil) dec = d;
+		if(m != nil) major = true;
 		if(a0 != nil)
 			alt = new BigNumber(a0);
 		if(a1 != nil)

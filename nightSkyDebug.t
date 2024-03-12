@@ -139,6 +139,12 @@ DefineSystemAction(MapSky)
 		if(m.alt > 0)
 			l.append(m);
 
+/*
+		m = sky.getSun();
+		if(m.alt > 0)
+			l.append(m);
+*/
+
 		l.append(sky.getPolaris());
 
 		// Draw a circle representing the horizon.

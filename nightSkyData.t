@@ -574,15 +574,6 @@ modify NightSky
 			ra = 20
 			dec = 24
 		},
-/*
-		object: Ephem {
-			name = 'Polaris'
-			abbr = '*'
-			ra = 3
-			dec = 89
-			major = true
-		},
-*/
 		object: Ephem {
 			name = 'Pleiades'
 			abbr = 'M45'
@@ -591,4 +582,11 @@ modify NightSky
 			major = true
 		}
 	]
+;
+
+class PolarisEphem: Ephem
+	name = 'Polaris'
+	abbr = '*'
+	ra = 3
+	dec = 89
 ;

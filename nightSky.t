@@ -523,15 +523,8 @@ class NightSky: object
 		return([alt.roundToDecimal(0), az.roundToDecimal(0)]);
 	}
 
-	getMoonRA() {
-		return(getMoonRADeg() / 15);
-	}
-
-	getMoonRADeg() {
-		if(_lunarRADeg == nil)
-			_lunarRADeg = computeMoonRADeg();
-		return(_lunarRADeg);
-	}
+	getMoonRA() { return(getMoon().ra); }
+	getMoonRADeg() { return(getMoon().raDeg); }
 
 	// Returns the moons position relative to the local
 	// meridian, in degrees.
@@ -553,78 +546,24 @@ class NightSky: object
 		return(lst - getMoonRADeg());
 	}
 
-	// Returns the lunar RA at local midnight for the current
-	// day IN DEGREES.
-	//
-	// This is an even lower-precision version of the
-	// algorithm given by Flandern and Pulkkinen in:
-	//
-	// 	van Flandern, T.C. and Pulkkinen, K.F. 1979. Low-precision
-	//	 	formulae for planetary positions. The Astrophysical
-	//		Journal Supplement Series 41, 391.
-	//		http://dx.doi.org/10.1086/190623.
-	//
-	// This version is comically simpler, basically just grabbing
-	// the largest term for each element and not bothering to
-	// compute declination at all.
-	//
-	// We return a value in degrees (instead of hours) because we
-	// want to do our math with integers (because TADS3 floating point
-	// performance is DIRE).  We end up saving the lunar RA at local
-	// midnight, and when we want to figure out the moon's position in
-	// the sky at a given hour we treat it as if the moon is a fixed
-	// star with the given RA.
-	computeMoonRADeg() {
-		local l, m, f, d, n, g, off, d0;
-		local u, v, w, s;
-
-		d0 = new Date(calendar.getYear(), calendar.getMonth(),
-			calendar.getDay(), calendar._tz);
-		off = new BigNumber(d0.formatDate('%J')) - 2451545;
-
-		l = 0.606434 + (0.03660110129 * off);
-		m = 0.374897 + (0.03629164709 * off);
-		f = 0.259091 + (0.03674819520 * off);
-		d = 0.827362 + (0.03386319198 * off);
-		n = 0.347343 - (0.00014709391 * off);
-		g = 0.993126 + (0.00273777850 * off);
-
-		l = _pi2 * (l - l.getFloor());
-		m = _pi2 * (m - m.getFloor());
-		f = _pi2 * (f - f.getFloor());
-		d = _pi2 * (d - d.getFloor());
-		n = _pi2 * (n - n.getFloor());
-		g = _pi2 * (g - g.getFloor());
-
-		v = 0.39558 * (f + n).degreesToRadians().sine();
-		u = 1 - (0.10828 * m.degreesToRadians().cosine());
-		w = 0.10478 * m.degreesToRadians().sine();
-
-		s = w / (u - (v * v)).sqrt();
-		ra = l + (s / (1 - (s * s)).sqrt()).arctangent();
-
-		ra = ra.radiansToDegrees();
-
-		return(toInteger(ra));
-	}
-
 	// Returns an Ephem instance for the current lunar
 	// position.
 	getMoon(h?) {
 		local altAz;
 
-		// Canonicalize the time.
-		h = resolveHour(h);
-
 		// Create the Ephem instance if it doesn't
 		// already exist.
 		if(moonEphem == nil)
-			moonEphem = new Ephem('Moon', '@');
+			moonEphem = new MoonEphem();
 
 		if(moonEphem.alt == nil) {
-			moonEphem.ra = getMoonRA();
-			moonEphem.dec = _lunarDec;
+			// Possibly re-compute the lunar RA.
+			moonEphem.compute(calendar.getJulianDate());
 
+			// Canonicalize the time.
+			h = resolveHour(h);
+
+			// Get the local alt-az coordinates for the moon.
 			altAz = raDecToAltAz(moonEphem.ra, moonEphem.dec, h);
 			moonEphem.alt = altAz[1];
 			moonEphem.az = altAz[2];
@@ -633,17 +572,18 @@ class NightSky: object
 		return(moonEphem);
 	}
 
-	clearMoon() {
-		_lunarRADeg = nil;
-		if(moonEphem != nil)
-			moonEphem.clear();
-	}
+	clearMoon() { getMoon().clear(); }
 
+	// Polaris is in Ursa Minor and UMi has its own Ephem instance in
+	// the main constellation table.
+	// The module provides a separate ephemeris object for Polaris because
+	// it's a common guide star, and it makes visualization (i.e.
+	// via >MAP SKY) easier.
 	getPolaris(h?) {
 		local altAz;
 
 		if(polarisEphem == nil) {
-			polarisEphem = new Ephem('Polaris', '*', 3, 89);
+			polarisEphem = new PolarisEphem();
 			altAz = raDecToAltAz(polarisEphem.ra, polarisEphem.dec,
 				h);
 			polarisEphem.alt = altAz[1];
