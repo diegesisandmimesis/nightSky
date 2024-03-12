@@ -17,17 +17,21 @@ class MoonEphem: Ephem
 	name = 'Moon'
 	abbr = '@'
 
-	// The lunar declination actually varies quite a bit, but because
-	// all we care about is whether or not its visible and (roughly)
-	// how close to the local meridian it is, we just use a
-	// fixed declination to save a few floating point ops.
+	// Lunar declination varies quite a bit, but we don't REALLY
+	// need it to figure out if the moon is visible.  So we can
+	// optionally just use a fixed declination that'll work
+	// for most of the Northern Hemisphere and save ourselves
+	// a bit of floating point math every time we recompute things.
+	// To do this, just set computeDeclination to nil.
 	dec = 23
+	computeDeclination = true
 
 	// The RA in degrees.
 	raDeg = nil
 
 	// Remember the Julian date we computed the RA for.
 	_julianDate = nil
+
 
 	// pi times two.
 	_pi2 = 6.28318530
@@ -36,12 +40,12 @@ class MoonEphem: Ephem
 		if(_julianDate == d0)
 			return;
 
-		_computeRA(d0);
+		_computeRADec(d0);
 		_julianDate = d0;
 	}
 
 	// Computes the lunar RA at local midnight for the current
-	// day IN DEGREES.
+	// day and, optionally, the declination.
 	//
 	// This is an even lower-precision version of the
 	// algorithm given by Flandern and Pulkkinen in:
@@ -52,16 +56,15 @@ class MoonEphem: Ephem
 	//		http://dx.doi.org/10.1086/190623.
 	//
 	// This version is comically simpler, basically just grabbing
-	// the largest term for each element and not bothering to
+	// the largest term for each element and optionally not bothering to
 	// compute declination at all.
 	//
-	// We return a value in degrees (instead of hours) because we
-	// want to do our math with integers (because TADS3 floating point
-	// performance is DIRE).  We end up saving the lunar RA at local
-	// midnight, and when we want to figure out the moon's position in
-	// the sky at a given hour we treat it as if the moon is a fixed
-	// star with the given RA.
-	_computeRA(jd) {
+	// We save the RA in both degrees and hours because we
+	// want to do our math with integers.  The RA in hours is useful
+	// for reporting, but we save the RA in degrees for the
+	// marginal benefit of the extra precision when dealing with
+	// integer values.
+	_computeRADec(jd) {
 		local d, f, g, l, m, n, off, s, u, v, w;
 
 		off = new BigNumber(jd) - 2451545;
@@ -90,6 +93,12 @@ class MoonEphem: Ephem
 		raDeg = ra.radiansToDegrees();
 		ra = toInteger(raDeg / 15);
 		raDeg = toInteger(raDeg);
+
+		if(computeDeclination == true) {
+			s = v / u.sqrt();
+			dec = (s / (1 - (s * s)).sqrt()).arctangent();
+			dec = toInteger(dec.radiansToDegrees());
+		}
 	}
 
 	clear() {
