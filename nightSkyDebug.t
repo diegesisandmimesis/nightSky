@@ -74,11 +74,10 @@ VerbRule(DebugSky) 'debug' 'sky': DebugSkyAction
 
 DefineSystemAction(MapSky)
 	// Size of the map, in characters.
-	_size = 21
-	_radius = 10
+	_radius = 9
 
-	_sizeX = 41
-	_sizeY = 21
+	_sizeX = ((_radius * 4) + 1)
+	_sizeY = ((_radius * 2) + 1)
 
 	// Constellation labels.
 	_labels = nil
@@ -120,8 +119,8 @@ DefineSystemAction(MapSky)
 		// Create a vector of string buffers, filling them with
 		// the "." character.
 		// Each buffer is a line of the map.
-		buf = new Vector(_size);
-		for(y = 1; y <= _size; y++) {
+		buf = new Vector(_sizeY);
+		for(y = 1; y <= _sizeY; y++) {
 			buf[y] = new StringBuffer();
 			for(x = 1; x <= _sizeX; x++)
 				buf[y].append('.');
@@ -178,6 +177,8 @@ DefineSystemAction(MapSky)
 			// Add the marker.
 			buf[v.y].splice(x0, len, o.abbr);
 		});
+
+		"Time:  <<gCalendar.currentDate.formatDate('%c')>>\n ";
 
 		// Output the map, along with the legend.
 		i = 1;

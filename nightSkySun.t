@@ -37,13 +37,6 @@ class SunEphem: Ephem
 	_computeRA(jd) {
 		local eps, g, l, lambda, n;
 
-//local d = new Date(2021, 1, 1, 'UTC');
-//jd = d.formatDate('%J');
-// 18:50:12 RA, -22:56:08 DEC
-
-//jd = 2458850;
-// 18.76 RA -23.02 DEC
-
 		n = new BigNumber(jd) - 2451545.0;
 		l = 280.460 + 0.9856474 * n;
 		g = 357.528 + 0.9856003 * n;
