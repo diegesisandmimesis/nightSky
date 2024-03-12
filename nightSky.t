@@ -328,6 +328,22 @@ class NightSky: object
 		return(nil);
 	}
 
+	checkMoon(h?, width?) {
+		local off;
+
+		off = getMoonMeridianPosition(h);
+		width = resolveWidth(width) * 15;
+		return((off > -width) && (off < width));
+	}
+
+	checkSun(h?, width?) {
+		local off;
+
+		off = getSunMeridianPosition(h);
+		width = resolveWidth(width) * 15;
+		return((off > -width) && (off < width));
+	}
+
 	// Make sure a value is between 0 and 23.
 	modTime(v) {
 		v = v % 24;
