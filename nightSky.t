@@ -98,13 +98,6 @@
 //	the-sky-instance time if none is given) altitude-azimuth coordinates
 //	computed.  The values will be available as moon.alt and moon.az.
 //
-//	NOTE:	The lunar declination actually varies between +/- 28.725
-//		degrees, but the module uses a static declination (23 by
-//		default).  This allows accurate-ish computation of the
-//		lunar position relative to the meridian (and therefore
-//		whether or not the moon is visible), but doesn't accurately
-//		reflect the moon's actual north-south position in the sky.
-//
 //
 // GLOBAL GAME SKY
 //
