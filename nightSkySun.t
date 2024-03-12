@@ -35,39 +35,58 @@ class SunEphem: Ephem
 	}
 
 	_computeRA(jd) {
-		local eps, g, l, lambda, n, x, y;
+		local eps, g, l, lambda, n;
+
+//local d = new Date(2021, 1, 1, 'UTC');
+//jd = d.formatDate('%J');
+// 18:50:12 RA, -22:56:08 DEC
+
+//jd = 2458850;
+// 18.76 RA -23.02 DEC
 
 		n = new BigNumber(jd) - 2451545.0;
 		l = 280.460 + 0.9856474 * n;
 		g = 357.528 + 0.9856003 * n;
 
-		while(l > 360) l += 360;
-		while (l < 0) l += 360;
-		while(g > 360) l += 360;
+		while(l > 360) l -= 360;
+		while(l < 0) l += 360;
+
+		while(g > 360) g -= 360;
 		while(g < 0) g += 360;
 
 		g = g.degreesToRadians();
 
 		lambda = l + (1.915 * g.sine()) + (0.020 * (2 * g).sine());
 		eps = 23.439 - (0.0000004 * n);
-		y = eps.cosine() * lambda.sine();
-		x = lambda.cosine();
-		if(x > 0) {
-			ra = (y / x).arctangent();
-		} else if(x < 0 && (y >= 0)) {
-			ra = (y / x).arctangent() + _pi;
-		} else if(x < 0 && (y < 0)) {
-			ra = (y / x).arctangent() - _pi;
-		} else {
-			ra = _pi / 2;
-		}
+		ra = atan2(eps.cosine() * lambda.sine(), lambda.cosine());
 
 		dec = (eps.sine() * lambda.sine()).arcsine();
 		dec = toInteger(dec.radiansToDegrees());
+		//dec = 18;
 
 		ra = ra.radiansToDegrees();
+
+		while(ra > 360) ra -= 360;
+		while(ra < 0) ra += 360;
+
 		raDeg = toInteger(ra);
 		ra = toInteger(ra / 15);
+	}
+
+	atan2(y, x) {
+		if(x > 0) {
+			return((y / x).arctangent());
+		} else if(x < 0) {
+			if(y >= 0)
+				return((y / x).arctangent() + _pi);
+			else
+				return((y / x).arctangent() - _pi);
+		} else {
+			if(y > 0)
+				return(_pi / 2);
+			else
+				return(-(_pi / 2));
+		}
 	}
 
 	clear() {
