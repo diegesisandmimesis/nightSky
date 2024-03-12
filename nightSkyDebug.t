@@ -139,11 +139,9 @@ DefineSystemAction(MapSky)
 		if(m.alt > 0)
 			l.append(m);
 
-/*
 		m = sky.getSun();
 		if(m.alt > 0)
 			l.append(m);
-*/
 
 		l.append(sky.getPolaris());
 
@@ -191,6 +189,9 @@ DefineSystemAction(MapSky)
 			"\n ";
 			i += 1;
 		});
+
+		//"Moon position: <<toString(sky.getMoonMeridianPosition())>>\n ";
+		//"Sun position: <<toString(sky.getSunMeridianPosition())>>\n ";
 	}
 ;
 VerbRule(MapSky) 'map' 'sky': MapSkyAction

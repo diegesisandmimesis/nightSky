@@ -188,6 +188,7 @@ class NightSky: object
 	_lunarDec = 23
 
 	moonEphem = nil
+	sunEphem = nil
 	polarisEphem = nil
 
 	// To hold our list of constellations.
@@ -543,7 +544,7 @@ class NightSky: object
 		if(r > 180)
 			r -= 360;
 
-		return(lst - getMoonRADeg());
+		return(r);
 	}
 
 	// Returns an Ephem instance for the current lunar
@@ -573,6 +574,51 @@ class NightSky: object
 	}
 
 	clearMoon() { getMoon().clear(); }
+
+	getSunRA() { return(getSun().ra); }
+	getSunRADeg() { return(getSun().raDeg); }
+
+	getSunMeridianPosition(h?) {
+		local lst, r;
+
+		h = resolveHour(h);
+		lst = calendar.getLocalSiderealTime(h, longitude);
+		lst *= 15;
+
+		r = lst - getSunRADeg();
+
+		// Twiddle the value to keep it between -180 and 180.
+		if(r < -180)
+			r += 360;
+		if(r > 180)
+			r -= 360;
+
+		return(r);
+	}
+
+	getSun(h?) {
+		local altAz;
+
+		// Create the Ephem instance if it doesn't
+		// already exist.
+		if(sunEphem == nil)
+			sunEphem = new SunEphem();
+
+		if(sunEphem.alt == nil) {
+			sunEphem.compute(calendar.getJulianDate());
+
+			// Canonicalize the time.
+			h = resolveHour(h);
+
+			altAz = raDecToAltAz(sunEphem.ra, sunEphem.dec, h);
+			sunEphem.alt = altAz[1];
+			sunEphem.az = altAz[2];
+		}
+
+		return(sunEphem);
+	}
+
+	clearSun() { getSun().clear(); }
 
 	// Polaris is in Ursa Minor and UMi has its own Ephem instance in
 	// the main constellation table.
@@ -629,5 +675,6 @@ modify gameCalendar
 	clearCache() {
 		inherited();
 		gameSky.clearMoon();
+		gameSky.clearSun();
 	}
 ;
