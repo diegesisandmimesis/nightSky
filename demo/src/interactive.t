@@ -33,3 +33,4 @@ modify gameEnvironment
 	latitude = 42
 	longitude = -71
 ;
++Ephem 'Arcturus' 'ARC' ra = 14 dec = 19 order = 1;

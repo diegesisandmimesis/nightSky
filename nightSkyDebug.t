@@ -25,7 +25,7 @@ class Coord: object
 
 DefineLiteralAction(SetPosition)
 	execAction() {
-		local ar, sky, str;
+		local ar, str;
 
 		str = getLiteral();
 		ar = str.split(R'<space>');
@@ -36,9 +36,8 @@ DefineLiteralAction(SetPosition)
 		}
 		gSetPosition(toInteger(ar[1]), toInteger(ar[2]));
 
-		sky = gSky;
-		"Latitude is now <<toString(sky.latitude)>>, 
-			longitude is now <<toString(sky.longitude)>>.\n ";
+		"Latitude is now <<toString(gSky.latitude)>>, 
+			longitude is now <<toString(gSky.longitude)>>.\n ";
 	}
 ;
 
@@ -51,23 +50,22 @@ DefineSystemAction(DebugSky)
 	_limit = 26
 
 	execSystemAction() {
-		local c, l, sky;
+		local c, l;
 
 		c = gCalendar;
-		sky = gSky;
 
 		"It is now <<toString(c.getHour())>>:00 <<c.getMonthName()>>
 			<<toString(c.getDay())>>
 			<<toString(c.getYear())>>.\n ";
-		"Latitude = <<toString(sky.latitude)>>\n ";
-		"Longitude = <<toString(sky.longitude)>>\n ";
+		"Latitude = <<toString(gSky.latitude)>>\n ";
+		"Longitude = <<toString(gSky.longitude)>>\n ";
 		"<.p> ";
 		"Season: <<c.getSeasonName()>>\n ";
 		"Phase of Moon: <<c.getMoonPhaseName()>>\n ";
 		"Position of Moon:
-			<<toString(sky.getMoonMeridianPosition())>>\n ";
+			<<toString(gSky.getMoonMeridianPosition())>>\n ";
 		"Visible constellations:\n ";
-		l = sky.computePositions(nil, nil, _limit);
+		l = gSky.computePositions(nil, nil, _limit);
 		l.forEach(function(o) {
 			"\n\t<<o.name>> (<<toString(o.alt)>>,
 				<<toString(o.az)>>)\n ";
@@ -117,16 +115,12 @@ DefineSystemAction(MapSky)
 	}
 
 	execSystemAction() {
-		local center, buf, i, l, sky, x, y, n, v;
+		local center, buf, i, l, x, y, n, v;
 		local x0, m, len;
 
 		// Create the labels.
 		if(_labels == nil)
 			_initLabels();
-
-		sky = gSky;
-
-		//sky.setCatalog(brightStars);
 
 		// Create a vector of string buffers, filling them with
 		// the "." character.
@@ -143,18 +137,18 @@ DefineSystemAction(MapSky)
 
 		// Compute the alt-az coordinates of the visible
 		// constellations.
-		l = sky.computePositions(nil, nil, _limit);
+		l = gSky.computePositions(nil, nil, _limit);
 
 		// If the moon is visible, add it to the list of objects.
-		m = sky.getMoon();
+		m = gSky.getMoon();
 		if(m.alt > 0)
 			l.append(m);
 
-		m = sky.getSun();
+		m = gSky.getSun();
 		if(m.alt > 0)
 			l.append(m);
 
-		l.append(sky.getPolaris());
+		l.append(gSky.getPolaris());
 
 		// Draw a circle representing the horizon.
 		for(i = 0; i < 360; i += 3) {

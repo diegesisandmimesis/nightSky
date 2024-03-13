@@ -191,6 +191,8 @@ class NightSky: object
 	// Supplied by nightSkyData.t
 	_catalog = nil
 
+	_catalogExtra = nil
+
 	construct(lat?, long?, cal?) {
 		// We arbitrarily default to Greenwich if our location
 		// isn't given.
@@ -285,7 +287,7 @@ class NightSky: object
 
 	// Returns boolean true if the given constellation is visible.
 	checkCatalogObject(id, h?, width?) {
-		local i, lst, o;
+		local i, l, lst, o;
 
 		// We need an ID.
 		if(id == nil)
@@ -302,11 +304,10 @@ class NightSky: object
 		// have to.
 		lst = nil;
 
-		for(i = 1; i <= _catalog.getObjects().length; i++) {
-		//for(i = 1; i <= _catalog.length; i++) {
-			//o = _catalog[i].catalog;
-			o = _catalog.getObjectByIndex(i);
-			//o = _catalog[i];
+		l = getCatalogObjects();
+
+		for(i = 1; i <= l.length; i++) {
+			o = l[i];
 
 			// Check to see if we've matched a name or
 			// abbreviation.
@@ -659,16 +660,16 @@ class NightSky: object
 		if((obj == nil) || !obj.ofKind(Ephem))
 			return(nil);
 
-		if(_catalog == nil)
+		if(_catalogExtra == nil)
 			initCatalog();
 
-		_catalog.addEphem(obj);
+		_catalogExtra.addEphem(obj);
 
 		return(true);
 	}
 
 	// Create a new catalog for ourselves.
-	initCatalog() { setCatalog(new NightSkyCatalog()); }
+	initCatalog() { _catalogExtra = new NightSkyCatalog(); }
 
 	// Make the argument our current catalog.
 	setCatalog(obj) {
@@ -689,8 +690,17 @@ class NightSky: object
 		return(_catalog);
 	}
 
+
 	// Returns all the objects in the current catalog.
-	getCatalogObjects() { return(getCatalog().getObjects()); }
+	getCatalogObjects() {
+		local r, v;
+
+		r = getCatalog().getObjects();
+		if(_catalogExtra == nil)
+			return(r);
+		v = _catalogExtra.getObjects();
+		return(r + v);
+	}
 
 	// Returns a catalog object by its index in the catalog list.
 	getCatalogObjectByIndex(idx) {
@@ -698,10 +708,27 @@ class NightSky: object
 	}
 
 	// Returns the named object.
-	getCatalogObjectByID(id) { return(getCatalog().getObjectByID(id)); }
+	getCatalogObjectByID(id) {
+		local r, v;
+
+		r = getCatalog().getObjectByID(id);
+		if(_catalogExtra == nil)
+			return(r);
+		v = _catalogExtra.getObjectByID(id);
+		return(r + v);
+	}
 
 	// Returns all the catalog objects matching the given test function.
-	matchCatalogObjects(fn) { return(getCatalog().matchObjects(fn)); }
+	matchCatalogObjects(fn) {
+		local r, v;
+
+		r = getCatalog().matchObjects(fn);
+		if(_catalogExtra == nil)
+			return(r);
+		v = _catalogExtra.matchObjects(fn);
+
+		return(r + v);
+	}
 ;
 
 // Global NightSky instance tied to the global calendar.
