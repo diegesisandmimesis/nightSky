@@ -13,28 +13,11 @@
 
 #include "nightSky.h"
 
-class SunEphem: Ephem
+class SunEphem: DynamicEphem
 	name = 'Sun'
 	abbr = '()'
 
-	// The RA in degrees.
-	raDeg = nil
-
-	// Remember the Julian date we computed the RA for.
-	_julianDate = nil
-
-	// pi
-	_pi = 3.141592654
-
-	compute(d0) {
-		if(_julianDate == d0)
-			return;
-
-		_computeRA(d0);
-		_julianDate = d0;
-	}
-
-	_computeRA(jd) {
+	computeRADec(jd) {
 		local eps, g, l, lambda, n;
 
 		n = new BigNumber(jd) - 2451545.0;
@@ -67,6 +50,7 @@ class SunEphem: Ephem
 		ra = toInteger(ra / 15);
 	}
 
+	// atan2 implementation
 	atan2(y, x) {
 		if(x > 0) {
 			return((y / x).arctangent());
@@ -81,17 +65,5 @@ class SunEphem: Ephem
 			else
 				return(-(_pi / 2));
 		}
-/*
-		if(x > 0)
-			return(2 * (y / (((x * x) + (y * y)).sqrt + x)).arctangent());
-		if(y != 0)
-			return(2 * ((((x * x) + (y * y)).sqrt - x) / y).arctangent());
-		return(_pi);
-*/
-	}
-
-	clear() {
-		alt = nil;
-		az = nil;
 	}
 ;

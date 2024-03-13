@@ -13,7 +13,7 @@
 
 #include "nightSky.h"
 
-class MoonEphem: Ephem
+class MoonEphem: DynamicEphem
 	name = 'Moon'
 	abbr = '@'
 
@@ -25,24 +25,6 @@ class MoonEphem: Ephem
 	// To do this, just set computeDeclination to nil.
 	dec = 23
 	computeDeclination = true
-
-	// The RA in degrees.
-	raDeg = nil
-
-	// Remember the Julian date we computed the RA for.
-	_julianDate = nil
-
-
-	// pi times two.
-	_pi2 = 6.28318530
-
-	compute(d0) {
-		if(_julianDate == d0)
-			return;
-
-		_computeRADec(d0);
-		_julianDate = d0;
-	}
 
 	// Computes the lunar RA at local midnight for the current
 	// day and, optionally, the declination.
@@ -64,7 +46,7 @@ class MoonEphem: Ephem
 	// for reporting, but we save the RA in degrees for the
 	// marginal benefit of the extra precision when dealing with
 	// integer values.
-	_computeRADec(jd) {
+	computeRADec(jd) {
 		local d, f, g, l, m, n, off, s, u, v, w;
 
 		off = new BigNumber(jd) - 2451545;
@@ -99,10 +81,5 @@ class MoonEphem: Ephem
 			dec = (s / (1 - (s * s)).sqrt()).arctangent();
 			dec = toInteger(dec.radiansToDegrees());
 		}
-	}
-
-	clear() {
-		alt = nil;
-		az = nil;
 	}
 ;

@@ -137,7 +137,9 @@ DefineSystemAction(MapSky)
 
 		// Compute the alt-az coordinates of the visible
 		// constellations.
-		l = gSky.computePositions(nil, nil, _limit);
+		l = gSky.computePositions(nil, nil, _limit, function(o) {
+			return(o.alt > 0);
+		});
 
 		// If the moon is visible, add it to the list of objects.
 		m = gSky.getMoon();

@@ -92,3 +92,34 @@ class EphemOrder: object
 		location.addEphemOrder(self);
 	}
 ;
+
+// Class for ephemeris entries that don't have a fixed RA and DEC.
+class DynamicEphem: Ephem
+	// RA in degrees.
+	raDeg = nil
+
+	// Date when RA/DEC was computed.
+	_julianDate = nil
+
+	// Constants.
+	_pi = 3.141592654
+	_pi2 = 6.28318530
+
+	// Method called to update the object.
+	// The argument is the integer Julian date.
+	// By default we compute once per day.
+	compute(d) {
+		// If the date hasn't changed, we don't need to update.
+		if(_julianDate == d)
+			return;
+
+		// Actually compute the RA and DEC.
+		computeRADec(d);
+
+		// Remember the date the computed values are for.
+		_julianDate = d;
+	}
+
+	// Stub method.
+	computeRADec(d) {}
+;

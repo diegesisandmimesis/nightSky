@@ -540,25 +540,42 @@ class NightSky: object
 		return([alt.roundToDecimal(0), az.roundToDecimal(0)]);
 	}
 
-	getMoonRA() { return(getMoon().ra); }
-	getMoonRADeg() { return(getMoon().raDeg); }
+	updateDynamicEphem(obj, h?) {
+		local altAz;
 
-	// Returns the moons position relative to the local
-	// meridian, in degrees.
-	getMoonMeridianPosition(h?) {
+		if(obj == nil)
+			return(nil);
+
+		if(obj.alt == nil) {
+			// Possibly re-compute the RA.
+			obj.compute(calendar.getJulianDate());
+
+			// Canonicalize the time.
+			h = resolveHour(h);
+
+			// Get the local alt-az coordinates for the object.
+			altAz = raDecToAltAz(obj.ra, obj.dec, h);
+			obj.alt = altAz[1];
+			obj.az = altAz[2];
+		}
+
+		return(obj);
+	}
+
+	getMeridianPosition(obj, h?) {
 		local lst, r;
 
 		h = resolveHour(h);
 		lst = calendar.getLocalSiderealTime(h, longitude);
-		lst *= 15;
 
-		r = lst - getMoonRADeg();
-
-		// Twiddle the value to keep it between -180 and 180.
-		if(r < -180)
-			r += 360;
-		if(r > 180)
-			r -= 360;
+		if(obj.raDeg) {
+			lst *= 15;
+			r = lst - obj.raDeg;
+		} else {
+			r = (lst - obj.ra) * 15;
+		}
+		while(r < -180) r += 360;
+		while(r > 180) r -= 360;
 
 		return(r);
 	}
@@ -566,73 +583,32 @@ class NightSky: object
 	// Returns an Ephem instance for the current lunar
 	// position.
 	getMoon(h?) {
-		local altAz;
-
 		// Create the Ephem instance if it doesn't
 		// already exist.
 		if(moonEphem == nil)
 			moonEphem = new MoonEphem();
 
-		if(moonEphem.alt == nil) {
-			// Possibly re-compute the lunar RA.
-			moonEphem.compute(calendar.getJulianDate());
-
-			// Canonicalize the time.
-			h = resolveHour(h);
-
-			// Get the local alt-az coordinates for the moon.
-			altAz = raDecToAltAz(moonEphem.ra, moonEphem.dec, h);
-			moonEphem.alt = altAz[1];
-			moonEphem.az = altAz[2];
-		}
-
-		return(moonEphem);
+		return(updateDynamicEphem(moonEphem, h));
 	}
 
 	clearMoon() { getMoon().clear(); }
 
-	getSunRA() { return(getSun().ra); }
-	getSunRADeg() { return(getSun().raDeg); }
-
-	getSunMeridianPosition(h?) {
-		local lst, r;
-
-		h = resolveHour(h);
-		lst = calendar.getLocalSiderealTime(h, longitude);
-		lst *= 15;
-
-		r = lst - getSunRADeg();
-
-		// Twiddle the value to keep it between -180 and 180.
-		if(r < -180)
-			r += 360;
-		if(r > 180)
-			r -= 360;
-
-		return(r);
+	// Returns the moons position relative to the local
+	// meridian, in degrees.
+	getMoonMeridianPosition(h?) {
+		return(getMeridianPosition(getMoon(), h));
 	}
 
 	getSun(h?) {
-		local altAz;
-
 		// Create the Ephem instance if it doesn't
 		// already exist.
 		if(sunEphem == nil)
 			sunEphem = new SunEphem();
 
-		if(sunEphem.alt == nil) {
-			sunEphem.compute(calendar.getJulianDate());
-
-			// Canonicalize the time.
-			h = resolveHour(h);
-
-			altAz = raDecToAltAz(sunEphem.ra, sunEphem.dec, h);
-			sunEphem.alt = altAz[1];
-			sunEphem.az = altAz[2];
-		}
-
-		return(sunEphem);
+		return(updateDynamicEphem(sunEphem, h));
 	}
+
+	getSunMeridianPosition(h?) { return(getMeridianPosition(getSun(), h)); }
 
 	clearSun() { getSun().clear(); }
 
