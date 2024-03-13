@@ -28,9 +28,12 @@ gameMain: GameMainDef initialPlayerChar = me;
 startRoom: Room 'Void' "This is a featureless void. ";
 +me: Person;
 
+// Set the current time to be June 22, 1979, @ 23:00 Eastern, and
+// the location is Cambridge, Mass.
 modify gameEnvironment
 	currentDate = new Date(1979, 6, 22, 23, 0, 0, 0, 'EST-5EDT')
 	latitude = 42
 	longitude = -71
 ;
-+Ephem 'Arcturus' 'ARC' ra = 14 dec = 19 order = 1;
+// Add data for Arcturus.
+//+Ephem 'Arcturus' 'ARC' ra = 14 dec = 19 order = 1;

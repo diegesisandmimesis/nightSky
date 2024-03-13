@@ -224,4 +224,30 @@ VerbRule(DebugTick) 'debug' 'tick': DebugTickAction
 	verbPhrase = 'debug/debugging time tick'
 ;
 
+DefineLiteralAction(SetCatalog)
+	execAction() {
+		local obj, str;
+
+		str = getLiteral();
+
+		obj = nil;
+		forEachInstance(NightSkyCatalog, function(o) {
+			if(o.catalogID == str)
+				obj = o;
+		});
+		if(obj == nil) {
+			reportFailure('No catalog matching <q><<str>></q>
+				found. ');
+			exit;
+		}
+		gSky.setCatalog(obj);
+		"Catalog set. ";
+	}
+;
+
+VerbRule(SetCatalog)
+	'set' 'catalog' singleLiteral: SetCatalogAction
+	verbPhrase = 'set/setting the catalog to (what)'
+;
+
 #endif // __DEBUG
