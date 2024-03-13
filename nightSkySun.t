@@ -57,7 +57,6 @@ class SunEphem: Ephem
 
 		dec = (eps.sine() * lambda.sine()).arcsine();
 		dec = toInteger(dec.radiansToDegrees());
-		//dec = 18;
 
 		ra = ra.radiansToDegrees();
 

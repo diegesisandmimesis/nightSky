@@ -17,4 +17,8 @@
 #define gSetPosition(l0, l1) (gameSky.setPosition(l0, l1))
 #define gSky (gameSky)
 
+NightSkyCatalog template 'catalogID' 'name'?;
+Ephem template 'name' 'abbr';
+EphemOrder template [ order ];
+
 #define NIGHT_SKY_H

@@ -2,6 +2,9 @@
 //
 // nightSkyDebug.t
 //
+//	The module's debugging stuff.  Nothing in this file is compiled
+//	unless t3make is called with the -d flag.
+//
 #include <adv3.h>
 #include <en_us.h>
 
@@ -45,6 +48,8 @@ VerbRule(SetPosition)
 ;
 
 DefineSystemAction(DebugSky)
+	_limit = 26
+
 	execSystemAction() {
 		local c, l, sky;
 
@@ -59,9 +64,10 @@ DefineSystemAction(DebugSky)
 		"<.p> ";
 		"Season: <<c.getSeasonName()>>\n ";
 		"Phase of Moon: <<c.getMoonPhaseName()>>\n ";
-		"Position of Moon: <<toString(sky.getMoonMeridianPosition())>>\n ";
+		"Position of Moon:
+			<<toString(sky.getMoonMeridianPosition())>>\n ";
 		"Visible constellations:\n ";
-		l = sky.computePositions(nil, nil, true);
+		l = sky.computePositions(nil, nil, _limit);
 		l.forEach(function(o) {
 			"\n\t<<o.name>> (<<toString(o.alt)>>,
 				<<toString(o.az)>>)\n ";
@@ -74,10 +80,14 @@ VerbRule(DebugSky) 'debug' 'sky': DebugSkyAction
 
 DefineSystemAction(MapSky)
 	// Size of the map, in characters.
+	//_radius = 10
 	_radius = 9
 
 	_sizeX = ((_radius * 4) + 1)
 	_sizeY = ((_radius * 2) + 1)
+
+	// Only consider the top this many catalog objects
+	_limit = 26
 
 	// Constellation labels.
 	_labels = nil
@@ -116,6 +126,8 @@ DefineSystemAction(MapSky)
 
 		sky = gSky;
 
+		//sky.setCatalog(brightStars);
+
 		// Create a vector of string buffers, filling them with
 		// the "." character.
 		// Each buffer is a line of the map.
@@ -131,7 +143,7 @@ DefineSystemAction(MapSky)
 
 		// Compute the alt-az coordinates of the visible
 		// constellations.
-		l = sky.computePositions(nil, nil, true);
+		l = sky.computePositions(nil, nil, _limit);
 
 		// If the moon is visible, add it to the list of objects.
 		m = sky.getMoon();
@@ -178,6 +190,8 @@ DefineSystemAction(MapSky)
 			buf[v.y].splice(x0, len, o.abbr);
 		});
 
+		l.sort(nil, { a, b: a.abbr.compareIgnoreCase(b.abbr) });
+
 		"Time:  <<gCalendar.currentDate.formatDate('%c')>>\n ";
 
 		// Output the map, along with the legend.
@@ -190,9 +204,6 @@ DefineSystemAction(MapSky)
 			"\n ";
 			i += 1;
 		});
-
-		//"Moon position: <<toString(sky.getMoonMeridianPosition())>>\n ";
-		//"Sun position: <<toString(sky.getSunMeridianPosition())>>\n ";
 	}
 ;
 VerbRule(MapSky) 'map' 'sky': MapSkyAction

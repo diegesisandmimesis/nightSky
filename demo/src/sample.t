@@ -35,7 +35,7 @@ gameMain: GameMainDef
 		h = 23;
 		"visible constellations:\n ";
 
-		l = sky.computePositions(h, nil, true, function(o) {
+		l = sky.computePositions(h, nil, 20, function(o) {
 			return(o.alt >= 0);
 		});
 		l.forEach(function(o) {

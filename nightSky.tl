@@ -3,5 +3,8 @@ source: nightSky.t
 source: nightSkyEphem.t
 source: nightSkyMoon.t
 source: nightSkySun.t
-source: nightSkyData.t
+source: nightSkyCatalog.t
+source: nightSkyIAU.t
+source: nightSkyStars.t
+source: nightSkyPreinit.t
 source: nightSkyDebug.t

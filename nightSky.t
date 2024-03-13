@@ -37,9 +37,15 @@
 //		// Returns a list of the visible constellations at
 //		// local time 23:00, with a horizon radius of 5 hours
 //		// of right ascension (first and second arguments).  The
-//		// third argument is a boolean flag.  If true, then only
-//		// "major" constellations will be returned.
-//		local visible = sky.computeVisible(23, 5, true);
+//		// third argument is an optional numerical limit.  If given,
+//		// only catalog objects with a catalog order equal to or
+//		// lower than the limit will be used.  In the example below,
+//		// only the top 20 objects will be considered.  Note that
+//		// this does NOT mean that computeVisible() will return 20
+//		// objects, it means that the visible members of the top 20
+//		// will be returned.  For more information on the ranking,
+//		// see the comments at the top of nightSkyEphem.t
+//		local visible = sky.computeVisible(23, 5, 20);
 //
 //	Get approximate positions of the visible constellations:
 //
@@ -158,9 +164,6 @@ class NightSky: object
 	// Holds a Calendar instance.
 	calendar = nil
 
-	// By default, only return "major" constellations.
-	onlyMajor = true
-
 	// The viewing position's latitude and lognitude as bignum
 	// radians.
 	_lat = nil
@@ -186,10 +189,7 @@ class NightSky: object
 
 	// To hold our list of constellations.
 	// Supplied by nightSkyData.t
-	_constellations = nil
-
-	// Constant equal to 2 pi.
-	_pi2 = 6.28318530
+	_catalog = nil
 
 	construct(lat?, long?, cal?) {
 		// We arbitrarily default to Greenwich if our location
@@ -246,7 +246,7 @@ class NightSky: object
 	// hours of right ascension.  Default is 5, which means
 	// that the current meridian +/- 5 hours, or ~11 hours
 	// or just under half the total sky is visible.
-	computeVisible(h?, width?, short?) {
+	computeVisible(h?, width?, limit?) {
 		local lst;
 
 		// Handle defaults.
@@ -256,32 +256,35 @@ class NightSky: object
 		// Get the local sidereal time.
 		lst = calendar.getLocalSiderealTime(h, longitude);
 
-		return(searchConstellations(lst, width, short));
+		return(searchConstellations(lst, width, limit));
+	}
+
+	searchConstellations(lst, width, limit?) {
+		return(searchCatalog(lst, width, limit));
 	}
 
 	// Same as computeVisible() above, but the first argument is
 	// is local sidereal time (instead of local civil time).
-	searchConstellations(lst, width, short?) {
-		local v;
-
-		v = new Vector();
-		_constellations.forEach(function(o) {
-			// If we got the "short" flag, we only care
-			// about "major" constellations.
-			if((short == true) && (o.major != true))
-				return;
+	searchCatalog(lst, width, limit?) {
+		return(matchCatalogObjects(function(o) {
+			if((limit != nil) && (o.order >= limit))
+				return(nil);
 
 			// Check if the constellation is visible, and
 			// add it to the return list if it is.
 			if(isVisible(o, lst, width))
-				v.append(o);
-		});
+				return(true);
 
-		return(v);
+			return(nil);
+		}));
+	}
+
+	checkConstellation(id, h?, width?) {
+		return(checkCatalogObject(id, h, width));
 	}
 
 	// Returns boolean true if the given constellation is visible.
-	checkConstellation(id, h?, width?) {
+	checkCatalogObject(id, h?, width?) {
 		local i, lst, o;
 
 		// We need an ID.
@@ -299,8 +302,11 @@ class NightSky: object
 		// have to.
 		lst = nil;
 
-		for(i = 1; i <= _constellations.length; i++) {
-			o = _constellations[i];
+		for(i = 1; i <= _catalog.getObjects().length; i++) {
+		//for(i = 1; i <= _catalog.length; i++) {
+			//o = _catalog[i].catalog;
+			o = _catalog.getObjectByIndex(i);
+			//o = _catalog[i];
 
 			// Check to see if we've matched a name or
 			// abbreviation.
@@ -441,13 +447,13 @@ class NightSky: object
 
 	// Computes the alt-az coordinates of the visible constellations,
 	// returning them as a list of Ephem instances.
-	computePositions(h?, width?, short?, cb?) {
+	computePositions(h?, width?, limit?, cb?) {
 		local altAz, l, v;
 
 		h = resolveHour(h);
 		width = resolveWidth(width);
 
-		l = computeVisible(h, width, short);
+		l = computeVisible(h, width, limit);
 		v = new Vector(l.length);
 		l.forEach(function(o) {
 			altAz = raDecToAltAz(o.ra, o.dec, h);
@@ -647,6 +653,55 @@ class NightSky: object
 
 		return(polarisEphem);
 	}
+
+	// Add an ephemeris to our catalog.
+	addEphem(obj) {
+		if((obj == nil) || !obj.ofKind(Ephem))
+			return(nil);
+
+		if(_catalog == nil)
+			initCatalog();
+
+		_catalog.addEphem(obj);
+
+		return(true);
+	}
+
+	// Create a new catalog for ourselves.
+	initCatalog() { setCatalog(new NightSkyCatalog()); }
+
+	// Make the argument our current catalog.
+	setCatalog(obj) {
+		// Make sure it's a catalog instance.
+		if((obj == nil) || !obj.ofKind(NightSkyCatalog))
+			return(nil);
+
+		_catalog = obj;
+
+		return(true);
+	}
+
+	// Returns our current catalog.  If we don't have one set,
+	// use the IAU designated constellations.
+	getCatalog() {
+		if(_catalog == nil)
+			setCatalog(iauConstellations);
+		return(_catalog);
+	}
+
+	// Returns all the objects in the current catalog.
+	getCatalogObjects() { return(getCatalog().getObjects()); }
+
+	// Returns a catalog object by its index in the catalog list.
+	getCatalogObjectByIndex(idx) {
+		return(getCatalog().getObjectByIndex(idx));
+	}
+
+	// Returns the named object.
+	getCatalogObjectByID(id) { return(getCatalog().getObjectByID(id)); }
+
+	// Returns all the catalog objects matching the given test function.
+	matchCatalogObjects(fn) { return(getCatalog().matchObjects(fn)); }
 ;
 
 // Global NightSky instance tied to the global calendar.
