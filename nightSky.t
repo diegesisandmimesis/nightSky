@@ -258,7 +258,7 @@ class NightSky: object
 		// Get the local sidereal time.
 		lst = calendar.getLocalSiderealTime(h, longitude);
 
-		return(searchConstellations(lst, width, limit));
+		return(searchCatalog(lst, width, limit));
 	}
 
 	searchConstellations(lst, width, limit?) {
@@ -271,6 +271,8 @@ class NightSky: object
 		return(matchCatalogObjects(function(o) {
 			if((limit != nil) && (o.order >= limit))
 				return(nil);
+
+			o.compute(calendar.getJulianDate());
 
 			// Check if the constellation is visible, and
 			// add it to the return list if it is.
@@ -287,7 +289,7 @@ class NightSky: object
 
 	// Returns boolean true if the given constellation is visible.
 	checkCatalogObject(id, h?, width?) {
-		local i, l, lst, o;
+		local i, jd, l, lst, o;
 
 		// We need an ID.
 		if(id == nil)
@@ -304,6 +306,8 @@ class NightSky: object
 		// have to.
 		lst = nil;
 
+		jd = nil;
+
 		l = getCatalogObjects();
 
 		for(i = 1; i <= l.length; i++) {
@@ -319,6 +323,9 @@ class NightSky: object
 				if(lst == nil)
 					lst = calendar.getLocalSiderealTime(h,
 						longitude);
+				if(jd == nil)
+					jd = calendar.getJulianDate();
+				o.compute(jd);
 
 				// Check the visibility.
 				return(isVisible(o, lst, width));
@@ -546,18 +553,16 @@ class NightSky: object
 		if(obj == nil)
 			return(nil);
 
-		if(obj.alt == nil) {
-			// Possibly re-compute the RA.
-			obj.compute(calendar.getJulianDate());
+		// Possibly re-compute the RA.
+		obj.compute(calendar.getJulianDate());
 
-			// Canonicalize the time.
-			h = resolveHour(h);
+		// Canonicalize the time.
+		h = resolveHour(h);
 
-			// Get the local alt-az coordinates for the object.
-			altAz = raDecToAltAz(obj.ra, obj.dec, h);
-			obj.alt = altAz[1];
-			obj.az = altAz[2];
-		}
+		// Get the local alt-az coordinates for the object.
+		altAz = raDecToAltAz(obj.ra, obj.dec, h);
+		obj.alt = altAz[1];
+		obj.az = altAz[2];
 
 		return(obj);
 	}

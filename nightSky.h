@@ -20,5 +20,6 @@
 NightSkyCatalog template 'catalogID' 'name'?;
 Ephem template 'name' 'abbr';
 EphemOrder template [ order ];
+Planet template 'name' +order? [_a] [_e] [_I] [_L] [_Lperi] [_Lnode] [_correction]?;
 
 #define NIGHT_SKY_H

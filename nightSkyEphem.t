@@ -47,6 +47,9 @@ class Ephem: object
 			az = new BigNumber(a1);
 	}
 
+	// For fixed stars, we don't have to recacluate anything.
+	compute(d) {}
+
 	// Clear computed values.
 	clear() {
 		alt = nil;
@@ -122,4 +125,21 @@ class DynamicEphem: Ephem
 
 	// Stub method.
 	computeRADec(d) {}
+
+	// atan2 implementation
+	atan2(y, x) {
+		if(x > 0) {
+			return((y / x).arctangent());
+		} else if(x < 0) {
+			if(y >= 0)
+				return((y / x).arctangent() + _pi);
+			else
+				return((y / x).arctangent() - _pi);
+		} else {
+			if(y > 0)
+				return(_pi / 2);
+			else
+				return(-(_pi / 2));
+		}
+	}
 ;
