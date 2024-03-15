@@ -16,6 +16,12 @@
 class Planet: DynamicEphem
 	abbr = (name.substr(0, 3))
 
+	// Keep iterating until the difference between terms is less than this.
+	eccentricAnomalyDelta = 0.0000001
+
+	// Maximum number of iterations
+	maxIterations = 10
+
 	// Orbital elements, ephemeris
 	_a = nil		// semi-major axis
 	_e = nil		// eccentricity
@@ -33,6 +39,7 @@ class Planet: DynamicEphem
 	Lperi = nil
 	Lnode = nil
 
+	// Distance (from the Earth-Moon barycenter, in AU)
 	dist = nil
 
 	// Position in heliocentric rectangular coordinates, units of AU
@@ -134,7 +141,10 @@ class Planet: DynamicEphem
 		dE = 1;
 		i = 0;
 
-		while((abs(dE) > 0.0000001) && (i < 10)) {
+		// Iterate until the delta is less than our threshold,
+		// or we've use the maximum number of iterations.
+		while((abs(dE) > eccentricAnomalyDelta)
+			&& (i < maxIterations)) {
 			dE = _kepler(m, e, E);
 			E += dE;
 			i++;
