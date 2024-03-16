@@ -8,6 +8,6 @@ source: nightSkyCatalog.t
 source: nightSkyIAU.t
 source: nightSkyStars.t
 source: nightSkyPreinit.t
-source: nightSkyState.t
+source: nightSkyCacheDiff.t
 source: nightSkyCache.t
 source: nightSkyDebug.t
