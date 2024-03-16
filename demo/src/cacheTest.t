@@ -36,7 +36,6 @@ modify gameEnvironment
 	longitude = -71
 
 	cacheDays = 10
-	cacheCatalogs = static [ 'planets' ]
 ;
 // Add data for Arcturus.
 //+Ephem 'Arcturus' 'ARC' ra = 14 dec = 19 order = 1;

@@ -20,7 +20,7 @@ modify gameEnvironment
 	cacheDays = 0
 
 	// List of catalogs to pre-cache.
-	cacheCatalogs = nil
+	cacheCatalogs = static [ 'planets' ]
 
 	// Date instance and integer Julian date of the start of the cache.
 	cacheStartDate = nil
