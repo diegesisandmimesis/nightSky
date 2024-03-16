@@ -149,12 +149,10 @@ modify gameEnvironment
 		// Compute the position of each object in the catalog
 		// and cache it.
 		cat.objectList.forEach(function(o) {
-			//if(o.skyCacheID == nil)
-				//assignSkyCacheID(o);
+			if(!o.ofKind(DynamicEphem))
+				return;
 			o.compute(gCalendar.getJulianDate());
 			cache.addObject(o);
-			//obj.catalog[o.skyCacheID] = new SkyCatalogEphem(o.ra,
-				//o.raDeg, o.dec);
 		});
 	}
 
