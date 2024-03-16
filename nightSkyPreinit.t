@@ -10,7 +10,7 @@
 
 #include "nightSky.h"
 
-PreinitObject
+nightSkyPreinit: PreinitObject
 	execute() {
 		forEachInstance(Ephem, function(o) {
 			o.initializeEphem();

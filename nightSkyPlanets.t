@@ -205,7 +205,7 @@ class Planet: DynamicEphem
 
 	// Convert equitorial coordinates from heliocentric to
 	// geocentric (assuming we're not the Ephem instance for
-	// the Earth-Moon barycenter.
+	// the Earth-Moon barycenter).
 	_convertEquitorial(x, y, z, t) {
 		local rE;
 

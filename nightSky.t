@@ -663,6 +663,20 @@ class NightSky: object
 		return(true);
 	}
 
+	setCatalogByID(id) {
+		local obj;
+
+		obj = nil;
+		forEachInstance(NightSkyCatalog, function(o) {
+			if(o.catalogID == id)
+				obj = o;
+		});
+		if(obj == nil)
+			return(nil);
+
+		return(setCatalog(obj));
+	}
+
 	// Returns our current catalog.  If we don't have one set,
 	// use the IAU designated constellations.
 	getCatalog() {
@@ -714,7 +728,7 @@ class NightSky: object
 
 // Global NightSky instance tied to the global calendar.
 gameSky: NightSky, PreinitObject
-	execBeforeMe = static [ gameEnvironment, gameCalendar ]
+	execBeforeMe = static [ gameEnvironment, gameCalendar, nightSkyPreinit ]
 	execute() {
 		calendar = gCalendar;
 		if(latitude == nil)
@@ -724,6 +738,8 @@ gameSky: NightSky, PreinitObject
 
 		setLatitude(latitude);
 		setLongitude(longitude);
+
+		gameEnvironment.initSkyCache();
 	}
 ;
 
@@ -737,6 +753,7 @@ modify gameEnvironment
 			gameSky.latitude = latitude;
 		if(longitude != nil)
 			gameSky.longitude = longitude;
+		//initSkyCache();
 	}
 ;
 

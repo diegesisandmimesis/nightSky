@@ -35,6 +35,8 @@ class Ephem: object
 	alt = nil		// computed altitude
 	az = nil		// computed azimuth
 
+	catalog = nil		// catalog we belong to
+
 	construct(n?, a?, r?, d?, m?, a0?, a1?) {
 		if(n != nil) name = n;
 		if(a != nil) abbr = a;
@@ -49,6 +51,8 @@ class Ephem: object
 
 	// For fixed stars, we don't have to recacluate anything.
 	compute(d) {}
+
+	checkCache(jd) {}
 
 	// Clear computed values.
 	clear() {
@@ -114,6 +118,9 @@ class DynamicEphem: Ephem
 	compute(d) {
 		// If the date hasn't changed, we don't need to update.
 		if(_julianDate == d)
+			return;
+
+		if((skyCacheID != nil) && checkCache(d))
 			return;
 
 		// Actually compute the RA and DEC.
