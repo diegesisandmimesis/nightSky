@@ -173,7 +173,7 @@ DefineSystemAction(MapSky)
 			v = _polarToRect(center, o.az, n);
 
 			// First, try to offset the label by half its width.
-			len = o.abbr.length;
+			len = o.symbol.length;
 			x0 = v.x - (len / 2);
 
 			// Bounds check.
@@ -183,10 +183,10 @@ DefineSystemAction(MapSky)
 				x0 = _sizeX - len;
 
 			// Add the marker.
-			buf[v.y].splice(x0, len, o.abbr);
+			buf[v.y].splice(x0, len, o.symbol);
 		});
 
-		l.sort(nil, { a, b: a.abbr.compareIgnoreCase(b.abbr) });
+		l.sort(nil, { a, b: a.symbol.compareIgnoreCase(b.symbol) });
 
 		"Time:  <<gCalendar.currentDate.formatDate('%c')>>\n ";
 
@@ -195,7 +195,7 @@ DefineSystemAction(MapSky)
 		buf.forEach(function(o) {
 			"<<o>>";
 			if(i <= l.length) {
-				" <<l[i].abbr>>:\t<<l[i].name>>";
+				" <<l[i].symbol>>:\t<<l[i].name>>";
 			}
 			"\n ";
 			i += 1;

@@ -15,7 +15,8 @@
 
 class MoonEphem: DynamicEphem
 	name = 'Moon'
-	abbr = '@'
+	abbr = 'Moon'
+	symbol = '@'
 
 	// Lunar declination varies quite a bit, but we don't REALLY
 	// need it to figure out if the moon is visible.  So we can

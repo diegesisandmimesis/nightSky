@@ -15,7 +15,8 @@
 
 class SunEphem: DynamicEphem
 	name = 'Sun'
-	abbr = '()'
+	abbr = 'Sun'
+	symbol = '()'
 
 	computeRADec(jd) {
 		local eps, g, l, lambda, n;

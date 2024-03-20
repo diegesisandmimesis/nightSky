@@ -111,7 +111,8 @@ class NightSkyCatalog: object
 // One-off Ephem instance for Polaris.  Used by the map in the debugging tools.
 class PolarisEphem: Ephem
 	name = 'Polaris'
-	abbr = '*'
+	abbr = 'a UMi'
+	symbol = '*'
 	ra = 3
 	dec = 89
 ;

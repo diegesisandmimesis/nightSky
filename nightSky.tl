@@ -9,5 +9,5 @@ source: nightSkyIAU.t
 source: nightSkyStars.t
 source: nightSkyPreinit.t
 source: nightSkyCacheDiff.t
-source: nightSkyCache.t
 source: nightSkyDebug.t
+source: nightSkyCache.t

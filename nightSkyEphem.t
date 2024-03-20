@@ -27,6 +27,7 @@
 class Ephem: object
 	name = nil		// the object's name
 	abbr = nil		// abbreviation.  mostly used for debugging
+	symbol = (abbr)		// symbol (mostly for debugging)
 	ra = nil		// right ascension
 	dec = nil		// declination
 
