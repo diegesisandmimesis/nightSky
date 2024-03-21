@@ -287,6 +287,26 @@ class NightSky: object
 		return(checkCatalogObject(id, h, width));
 	}
 
+	getCatalogObjectName(id) {
+		local i, l, o;
+
+		if(id == nil)
+			return(nil);
+		id = id.toLower();
+
+		l = getCatalogObjects();
+
+		for(i = 1; i <= l.length; i++) {
+			o = l[i];
+			if((id == o.name.toLower())
+				|| (id == o.abbr.toLower())) {
+				return(o.name);
+			}
+		}
+
+		return(nil);
+	}
+
 	// Returns boolean true if the given constellation is visible.
 	checkCatalogObject(id, h?, width?) {
 		local i, jd, l, lst, o;
@@ -476,6 +496,22 @@ class NightSky: object
 		return(v);
 	}
 
+/*
+	computePosition(objID, h?) {
+		local altAz, obj;
+
+		if((obj = getCatalog().getObjectByID(objID)) == nil)
+			return(nil);
+
+		h = resolveHour(h);
+		altAz = raDecToAltAz(o.ra, o.dec, h);
+		o.alt = altAz[1];
+		o.az = altAz[2];
+
+		return(o);
+	}
+*/
+
 	// Compute right ascension and declination to altitude and
 	// azimuth.
 	// Third argument is an optional integer hour, defaulting to
@@ -546,6 +582,8 @@ class NightSky: object
 		// Return the alt-az coordinates.
 		return([alt.roundToDecimal(0), az.roundToDecimal(0)]);
 	}
+
+	updateEphem(obj, h?) { return(updateDynamicEphem(obj, h)); }
 
 	updateDynamicEphem(obj, h?) {
 		local altAz;
@@ -704,13 +742,18 @@ class NightSky: object
 
 	// Returns the named object.
 	getCatalogObjectByID(id) {
-		local r, v;
+		local r;
 
 		r = getCatalog().getObjectByID(id);
-		if(_catalogExtra == nil)
+		if(r != nil)
 			return(r);
-		v = _catalogExtra.getObjectByID(id);
-		return(r + v);
+
+		if(_catalogExtra == nil)
+			return(nil);
+
+		r = _catalogExtra.getObjectByID(id);
+
+		return(r);
 	}
 
 	// Returns all the catalog objects matching the given test function.
