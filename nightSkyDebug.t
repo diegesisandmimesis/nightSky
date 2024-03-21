@@ -64,6 +64,10 @@ DefineSystemAction(DebugSky)
 		"Phase of Moon: <<c.getMoonPhaseName()>>\n ";
 		"Position of Moon:
 			<<toString(gSky.getMoonMeridianPosition())>>\n ";
+		"Position of Sun:
+			<<toString(gSky.getSunMeridianPosition())>>\n ";
+		"Sun Visibility:
+			<<toString(gSky.checkSun())>>\n ";
 		"Visible constellations:\n ";
 		l = gSky.computePositions(nil, nil, _limit);
 		l.forEach(function(o) {
